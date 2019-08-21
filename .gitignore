@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+*.suo
+*.sqlite
+*.jpg
+*.xml
+*.log
+*.db
