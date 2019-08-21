@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>  
+	    <link rel = "stylesheet" href="main.css">
+	</head>
+	<body>
+		<div class = "pageWrapper valign-wrapper center-align">
+			<div class="row">
+				<div class="formWrapper col s12">
+					<h3>Авторизация</h3><p></p>
+					<div class="input-field">
+						 <i class="material-icons prefix">account_circle</i>
+			            <input id="login" type="text" data-length="10">
+			            <label for="login">Username</label>
+			        </div> 
+			        <div class="input-field">
+			        	 <i class="material-icons prefix">vpn_key</i>
+			            <input id="password" type="text" data-length="10">
+			            <label for="password">Password</label>
+			        </div>
+			        <div id = "response"></div>
+			        <div class = "row">
+			        	<div class = "col s6">
+							<p>
+						      <label>
+						        <input type="checkbox" />
+						        <span>Remember</span>
+						      </label>
+						    </p>
+						</div>
+						<div class = "col s6" style="padding: 3%;">
+					        <button class="btn waves-effect waves-light" onclick="sendForm()" name="send">Login
+							    <i class="material-icons right">send</i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.js" integrity="sha256-fNXJFIlca05BIO2Y5zh1xrShK3ME+/lYZ0j+ChxX2DA="
+  crossorigin="anonymous"></script>
+		<script src = "index.js"></script>
+	</body>
+</html>

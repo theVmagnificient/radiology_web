@@ -1,0 +1,73 @@
+.series_viewer {
+    width: 100%;
+}
+
+.leftbar_tools {
+	margin-top: 3%;
+	/*border: 1px solid black;*/
+	height: 50%;
+	max-height: 50%;
+}
+
+.rightbar_tools {
+	margin-top: 3%;
+	/*border: 1px solid black;*/
+	height: 50%;
+	max-height: 50%;
+}
+
+/*@media only screen and (max-width: 768px) {
+     For mobile phones: 
+    [class*="series_viewer"] {
+      width: 90%;
+    }
+}*/
+
+/* Popup box BEGIN */
+#predictionImage {
+    /*background:rgba(0,0,0,.4);*/
+    margin-top: 2%;
+    cursor:pointer;
+    display:none;
+    height:100%;
+    position:fixed;
+    text-align:center;
+    top:0;
+    width:100%;
+    z-index:10000;
+}
+#predictionImage > div {
+    background-color: #fff;
+    box-shadow: 10px 10px 60px #555;
+    display: inline-block;
+    height: auto;
+    max-width: 60%;
+    min-height: 60%;
+    vertical-align: middle;
+    width: 43%;
+    position: relative;
+    border-radius: 2px;
+    padding: 1%;
+}
+.popupCloseButton {
+    cursor: pointer;
+    display: inline-block;
+    position: absolute;
+    top: -2%;
+    right: -0.5%;
+    width: 3%;
+}
+
+.masks-collection {
+    max-height: 60%;
+    overflow-y: scroll;
+}
+
+/*.trigger_popup_fricc {
+    cursor: pointer;
+    font-size: 20px;
+    margin: 20px;
+    display: inline-block;
+    font-weight: bold;
+}*/
+/* Popup box BEGIN */

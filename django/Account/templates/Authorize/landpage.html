@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Авторизация</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{% load staticfiles %}
+	<link rel="stylesheet" href="{% static 'LandPage/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'LandPage/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'LandPage/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'LandPage/css/bootstrap-datepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'LandPage/css/jquery.timepicker.css' %}">
+
+    <link rel="stylesheet" href="{% static 'LandPage/fonts/ionicons/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'LandPage/fonts/fontawesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'LandPage/fonts/flaticon/font/flaticon.css' %}">
+
+    <!-- Theme Style -->
+    <link rel="stylesheet" href="{% static 'LandPage/css/style.css' %}">
+
+    <style>
+       .brain-icon {
+          background-image: url({% static "Authorize/images/brain.svg" %});
+        }
+    </style>
+</head>
+<body>
+<header role="banner">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+          <a class="navbar-brand" href="index.html">MosAI<span>radiology</span>  </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarsExample05">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link active" href="index.html">Главная</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="services.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Сервисы</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown04">
+                  <a class="dropdown-item" href="#">Опухоль легких</a>
+                  <a class="dropdown-item" href="#">Опухоль в мозге</a>
+                </div>
+
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="news.html">Новости</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="about.html">О нас</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="contact.html">Контакты</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/auth">Войти</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- END header -->
+    
+    <section class="home-slider owl-carousel">
+      <div class="slider-item" style="background-image: url({% static 'Authorize/images/carusel-1.jpg' %});">
+        
+        <div class="container">
+          <div class="row slider-text align-items-center">
+            <div class="col-md-7 col-sm-12 element-animate">
+              <h1>За нами будущее</h1>
+              <p>Искусственный интеллект, нейронные сети и машинное обучение быстро и прочно вошли в отрасль информатизации здравоохранения как один из ключевых драйверов и направлений развития на ближайшие годы.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="slider-item" style="background-image: url('https://www.nccs.com.sg/sites/shcommonassets/Assets/conditions-treatments/images/NCCS/CT%20Lung%20Cancer%20Resized.jpg');">
+        <div class="container">
+          <div class="row slider-text align-items-center">
+            <div class="col-md-7 col-sm-12 element-animate">
+              <h1>Современные решения</h1>
+              <p>Искусственный интеллект может решить проблему неправильной интерпретации медицинской информации.
+              Мы предлагаем "умные" решения для предварительной диагностики заболеваний.</p>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+    </section>
+    <!-- END slider -->
+{% comment %} 
+    
+    <section class="container home-feature mb-5">
+      <div class="row">
+        <div class="col-md-4 p-0 one-col element-animate">
+          <div class="col-inner p-xl-5 p-lg-5 p-md-4 p-sm-4 p-4">
+            <span class="icon flaticon-hospital-bed"></span>
+            <h2>Patient Services</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi unde impedit, necessitatibus, soluta sit quam minima expedita atque corrupti reiciendis.</p>
+          </div>
+          <a href="#" class="btn-more">Read More</a>
+        </div>
+        <div class="col-md-4 p-0 two-col element-animate">
+          <div class="col-inner p-xl-5 p-lg-5 p-md-4 p-sm-4 p-4">
+            <span class="icon flaticon-first-aid-kit"></span>
+            <h2>Medical Services</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi unde impedit, necessitatibus, soluta sit quam minima expedita atque corrupti reiciendis.</p>
+          </div>
+          <a href="#" class="btn-more">Read More</a>
+        </div>
+        <div class="col-md-4 p-0 three-col element-animate">
+          <div class="col-inner p-xl-5 p-lg-5 p-md-4 p-sm-4 p-4">
+            <span class="icon flaticon-hospital"></span>
+            <h2>Amenities</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi unde impedit, necessitatibus, soluta sit quam minima expedita atque corrupti reiciendis.</p>
+          </div>
+          <a href="#" class="btn-more">Read More</a>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="section stretch-section">
+      <div class="container">
+        <div class="row justify-content-center mb-5 element-animate">
+          <div class="col-md-8 text-center mb-5">
+            <h2 class="text-uppercase heading border-bottom mb-4">Почему именно мы?</h2>
+            <p class="mb-0 lead">Мы оч крутые</p>
+          </div>
+        </div>
+        <div class="row align-items-center">
+          
+          <div class="col-md-6 stretch-left-1 element-animate" data-animate-effect="fadeInLeft">
+            <a href="#" class="video"><img src="https://ak5.picdn.net/shutterstock/videos/3676115/thumb/10.jpg" alt="" class="img-fluid"></a>
+          </div>
+          <div class="col-md-6 stretch-left-1-offset pl-md-5 pl-0 element-animate" data-animate-effect="fadeInLeft">
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                <div class="media d-block media-feature text-center">
+                  <span class="icon flaticon-hospital"></span>
+                  <div class="media-body">
+                    <h3 class="mt-0 text-black">Amenities</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                <div class="media d-block media-feature text-center">
+                  <span class="icon flaticon-first-aid-kit"></span>
+                  <div class="media-body">
+                    <h3 class="mt-0 text-black">Medical Services</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                <div class="media d-block media-feature text-center">
+                  <span class="icon flaticon-hospital-bed"></span>
+                  <div class="media-body">
+                    <h3 class="mt-0 text-black">Patient Services</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                <div class="media d-block media-feature text-center">
+                  <span class="icon flaticon-doctor"></span>
+                  <div class="media-body">
+                    <h3 class="mt-0 text-black">Expert Doctors</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section> {% endcomment %}
+    <!-- END section -->
+
+    <section class="section custom-tabs">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-md-4 border-right element-animate">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+              <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true"><span>1</span> Опухоль лёгких</a>
+              <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false"><span>2</span> Опухоль мозга</a>
+            </div>
+          </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-7 element-animate">
+            
+            <div class="tab-content" id="v-pills-tabContent">
+              <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+                <span class="icon flaticon-lungs"></span>
+                <h2 class="text-primary">Опухоль лёгких</h2>
+                <p class="lead">Тут нужна информация о точности и функционале</p>
+              </div>
+              <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                <img src="{% static 'Authorize/images/brain.svg' %}" class = "icon" style = "margin-top: 5%; margin-bottom: 5%;" width="60" height="60" alt="image description">               
+                <h2 class="text-primary">Опухоль мозга</h2>
+                <p class="lead">Тут нужна информация о точности и функционале</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="section bg-light">
+      <div class="container">
+        <div class="row justify-content-center mb-5 element-animate">
+          <div class="col-md-8 text-center mb-5">
+            <h2 class="text-uppercase heading border-bottom mb-4">Функционал</h2>
+            <p class="mb-0 lead">Наша платформа позволяет дополнить работу доктора современными технологиями машинного обучения.</p>
+          </div>
+        </div>
+        <div class="row element-animate">
+          <div class="major-caousel js-carousel-1 owl-carousel">
+            <div>
+              <div class="media d-block media-custom text-center">
+                <img src="https://ak5.picdn.net/shutterstock/videos/3676115/thumb/10.jpg" alt="Image Placeholder" class="img-fluid">
+                <div class="media-body">
+                  <h3 class="mt-0 text-black">Пример 1</h3>
+                  <p>Тут пример из интерфейса, разметки снимка</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="media d-block media-custom text-center">
+                <img src="https://ak5.picdn.net/shutterstock/videos/3676115/thumb/10.jpg" alt="Image Placeholder" class="img-fluid">
+                <div class="media-body">
+                  <h3 class="mt-0 text-black">Пример 2</h3>
+                  <p>Тут пример из интерфейса, разметки снимка</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="media d-block media-custom text-center">
+                <img src="https://ak5.picdn.net/shutterstock/videos/3676115/thumb/10.jpg" alt="Image Placeholder" class="img-fluid">
+                <div class="media-body">
+                  <h3 class="mt-0 text-black">Пример 3</h3>
+                  <p>Тут пример из интерфейса, разметки снимка</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END slider -->
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="cover_1" style="background-image: url({% static 'LandPage/img/bg_1.jpg' %});">
+      <div class="container">
+        <div class="row text-center justify-content-center">
+          <div class="col-md-10">
+            <h2 class="heading element-animate">Начать использование</h2>
+            <p class="sub-heading element-animate mb-5">Для входа в систему необходима авторизация</p>
+            <p class="element-animate"><a href="/auth/" class="btn btn-primary btn-lg">Перейти</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <section class="section bg-light">
+      <div class="container">
+        <div class="row justify-content-center mb-5 element-animate">
+          <div class="col-md-8 text-center mb-1">
+            <h2 class="text-uppercase heading">Новости</h2>
+            {% comment %} <p class="mb-0 lead">Последние новости о нашей работе</p> {% endcomment %}
+          </div>
+        </div>
+        <div class="row element-animate">
+          <div class="major-caousel js-carousel-2 owl-carousel">
+            <div>
+              {% for n in news %}
+              <div class="media d-block media-custom text-left">
+                <img src="{{ n.image_src }}" alt="Image Placeholder" class="img-fluid">
+                <div class="media-body">
+                  {% comment %} <span class="meta-post">{{ n.time }}</span> {% endcomment %}
+                  <h3 class="mt-0 text-black"><a href="#" class="text-black">{{ n.title }}</a></h3>
+                  <p>{{ n.short_description }}</p>
+                  <p class="clearfix">
+                    <a href="" class="float-left">Читать</a>
+                  </p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <!-- END slider -->
+        </div>
+      </div>
+    </section>
+    <!-- END section -->
+
+    <a href="#" class="cta-link element-animate" data-animate-effect="fadeIn" data-toggle="modal" data-target="#modalAppointment">
+      {% comment %} <span class="sub-heading">Появился вопрос?</span> {% endcomment %}
+      <span class="heading">Появились вопросы?</span>
+    </a>
+    <!-- END cta-link -->
+
+    <footer class="site-footer" role="contentinfo">
+      <div class="container">
+        <div class="row mb-5 element-animate">
+          <div class="col-md-3 mb-5">
+            <h3>Сервисы</h3>
+            <ul class="footer-link list-unstyled">
+              <li><a href="#">Опухоль мозга</a></li>
+              <li><a href="#">Опухоль лёгких</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-5">
+            {% comment %} <h3>Latest News</h3>
+            <ul class="footer-link list-unstyled">
+              <li><a href="#">News &amp; Press Releases</a></li>
+              <li><a href="#">Health Care Professional News</a></li>
+              <li><a href="#">Events &amp; Conferences</a></li>
+            </ul> {% endcomment %}
+          </div>
+          <div class="col-md-3 mb-5">
+            <h3>О нас</h3>
+            <ul class="footer-link list-unstyled">
+              <li><a href="#"></a></li>
+              <li><a href="#">Технологии</a></li>
+              <li><a href="#">Статистика</a></li>
+              <li><a href="#">Обратная связь</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3 mb-5">
+            <h3>Контакты</h3>
+            <h4 class="text-uppercase mb-3 h6 text-white">Email</h5>
+            <p class="mb-5"><a href="mailto:test@test.ru">test@test.ru</a></p>
+            
+            <h4 class="text-uppercase mb-3 h6 text-white">Phone</h5>
+            <p>+7 (999) 999 99-99</p>
+
+          </div>
+        </div>
+
+        <div class="row pt-md-3 element-animate">
+          <div class="col-md-12">
+            <hr class="border-t">
+          </div>
+          <div class="col-md-6 col-sm-12 copyright">
+            <p>&copy; 2019 ДИТ</p>
+          </div>
+          <div class="col-md-6 col-sm-12 text-md-right text-sm-left">
+            <a href="#" class="p-2"><span class="fa fa-facebook"></span></a>
+            <a href="#" class="p-2"><span class="fa fa-twitter"></span></a>
+            <a href="#" class="p-2"><span class="fa fa-instagram"></span></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- END footer -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAppointment" tabindex="-1" role="dialog" aria-labelledby="modalAppointmentLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalAppointmentLabel">Обратная связь</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="#">
+              <div class="form-group">
+                <label for="appointment_name" class="text-black">Имя</label>
+                <input type="text" class="form-control" id="appointment_name">
+              </div>
+              <div class="form-group">
+                <label for="appointment_email" class="text-black">Почта</label>
+                <input type="text" class="form-control" id="appointment_email">
+              </div>
+              <div class="form-group">
+                <label for="appointment_message" class="text-black">Ваш вопрос</label>
+                <textarea name="" id="appointment_message" class="form-control" cols="30" rows="10"></textarea>
+              </div>
+              <div class="form-group">
+                <input type="button" value="Отправить" class="btn btn-primary" onclick=send_feedback()>
+              </div>
+              {% csrf_token %}
+            </form>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'LandPage/js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'LandPage/js/popper.min.js' %}"></script>
+    <script src="{% static 'Authorize/js/feedback.js' %}"></script>
+    <script src="{% static 'LandPage/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'LandPage/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'LandPage/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'LandPage/js/jquery.timepicker.min.js' %}"></script>
+    <script src="{% static 'LandPage/js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'LandPage/js/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+</body>
+</html>

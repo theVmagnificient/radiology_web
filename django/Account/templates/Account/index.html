@@ -1,0 +1,105 @@
+<html>
+
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'Account/style/main.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- <script src="https://unpkg.com/sweetalert2@7.17.0/dist/sweetalert2.all.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+    <script type="text/javascript" src = "{% static 'Account/loading.js' %}"></script>
+
+    <style type="text/css">
+        .showBase {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    {% block topbar %} {% include 'Account/topbar.html' %} {% endblock %}
+    {% block sidebar %} {% include 'Account/sidebar.html' %} {% endblock %}
+
+    <div class="hide-on-med-and-up">
+        <div class="row">
+            <div class="col s12 m4">
+                <div class="card hoverable">
+                    <div class="card-image">
+                        <img src="https://visualpharm.com/assets/30/User-595b40b85ba036ed117da56f.svg">
+                        <a class="btn-floating halfway-fab waves-effect waves-light red" style="margin-bottom: 5%;"><i
+                                class="material-icons" onclick="uploadAva()">edit</i></a>
+                    </div>
+                    <div class="card-content">
+                        <p><b>Логин: </b> {{ user.login }}</p>
+                        <p><b>Имя: </b> {{ user.name }}</p>
+                        <p><b>Фамилия: </b> {{ user.surname }}</p>
+                        <p><b>Почта: </b> {{ user.mail }}</p>
+                    </div>
+                    <div class="card-action">
+                        <a href="#" onclick="sendFeedbackForm()">Написать в поддержку</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hide-on-small-only">
+        <div class="row">
+            <div class="col s6">
+                <center>
+                    <div style="width: 60%" class = "hoverable show1 showBase">
+                        <div class = "card">
+                        <div class = "card-image">
+                        <img src= "/media/{{ extUser.ava.name }}">
+                        <a class="btn-floating halfway-fab waves-effect waves-light red" style="margin-bottom: 5%;"><i
+                            class="material-icons" onclick="uploadAva()">edit</i></a>
+                            </div>
+                        <br />
+                    </div>
+                </center>
+            </div>
+            <div class="col s6">
+                <div class = "row">
+                    <div class = "col s9">
+                        <div class="card show2 showBase">
+                            <div class="card-content">
+                                <span class="card-title">Информация об аккаунте</span>
+                                <p><b>Логин: </b> {{ user.login }}</p>
+                                <p><b>Имя: </b> {{ user.name }}</p>
+                                <p><b>Фамилия: </b> {{ user.surname }}</p>
+                                <p><b>Почта: </b> {{ user.mail }}</p>
+                            </div>
+                            <div class="card-action">
+                                <a href="#" onclick="changeAccountInfo()">Изменить данные</a>
+                                <a href="#" onclick="sendFeedbackForm()">Написать в поддержку</a>
+                            </div>
+                        </div>
+                        <div class="card show3 showBase">
+                            <div class="card-content">
+                                <span class="card-title">Уведомления</span>
+                                <p>У Вас есть 3 новых уведомления</p>
+                            </div>
+                            <div class="card-action">
+                                <a href="#">Просмотреть уведомления</a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    {% csrf_token %}
+    <script>
+        const ACCOUNT_LOGIN = "{{user.login}}";
+        const ACCOUNT_NAME = "{{user.name}}";
+        const ACCOUNT_SURNAME = "{{user.surname}}";
+        const ACCOUNT_MAIL = "{{user.mail}}";
+    </script>
+    <script src="{% static 'Account/js/change_account_info.js' %}"> </script>
+    <script src="{% static 'Account/js/chatSockets.js' %}"> </script>
+    <script src="{% static 'Account/js/send_feedback.js' %}"> </script>
+    <script src="{% static 'Account/js/upload_ava.js' %}"> </script>
+</body>
+
+</html>

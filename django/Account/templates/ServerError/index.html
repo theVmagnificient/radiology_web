@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load staticfiles %}
+		<title>404 - Страница не найдена</title>
+		<link rel = "stylesheet" href = "main.css">
+		<meta charset = "utf-8" />
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+		<style>
+			html, body {
+  				height: 100%;	
+			}
+
+			.error_header {
+				margin-top: 25%;
+				margin-left: 19%;
+				font-size: 250%;
+				font-weight: 600;
+				color: #CBDDE7;
+			}
+			.error_caption {
+				margin-left: 3%;
+				font-size: 110%;
+				font-style: italic;
+				color: #CBDDE7;
+			}
+			.error_caption_container {
+				margin-left: 19%;
+			}
+			.go_home {
+				margin-top: 5%;
+				margin-left: 19%;	
+			}
+			.error_code {
+				font-size: 120%;
+				font-style: italic;
+				color: #CBDDE7;
+			}
+
+			blockquote {
+				margin: 0;
+				color: #231E28;
+				padding: 30px 30px 30px 60px;
+				border-left: 8px solid #CBDDE7;
+				position: relative;
+				/*background: #FAF8EB; */
+				font-family: 'Lato', sans-serif;
+				font-weight: 300;
+			}
+			blockquote:before{
+				content: "\201C";
+				font-family: Arial;
+				color: #CBDDE7;
+				font-size: 70px;
+				position: absolute;
+				left: 15px;
+				top: 5px;
+			}
+			blockquote p {
+				font-style: italic;
+				font-size: 24px;
+				color:  #CBDDE7;
+				margin-top: 0;  
+			}
+			blockquote cite {
+				color:  #CBDDE7;
+			}
+
+			.pageWrapper {
+				--x: 0px;
+				--y: 0px;
+				height: 100%;
+				background-position: var(--x) var(--y);
+				background-size: 110% 140%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class = "pageWrapper" id = "pageWrapper">
+			<div class = "row">
+				<div class = "col s6">
+					<div class = "go_home" id = "go_home">
+						<a class="waves-effect waves-light btn-small" href = "/">Вернуться на главную</a>
+					</div>
+					<div class = "error_header_container" id = "error_header_container">
+						<p class = "error_header">
+							<span class = "error_code">{{error_type}}</span> 
+							{{error_header}}
+						</p>
+					</div>
+					<div class = "error_caption_container" id = "error_caption_container"></div>
+				</div>	
+				<!--<div class = "col s6"></div>-->
+			</div>
+		</div>
+		<script src = "{% static 'ServerError/js/index.js' %}"></script>
+		<script>
+			class ErrorMessage {
+				constructor(error_caption, cite, image_link) {
+					this.error_caption = error_caption;
+					this.cite = cite;
+					this.image_link = image_link;
+				}
+				applyErrorMsg() {
+					let ErrorCaption = this.error_caption;
+					let Cite = this.cite;
+					let ImageLink = this.image_link;
+					$(document).ready(function() {
+						$(".error_caption_container").html('<blockquote><p>' + ErrorCaption + '</p>' + 
+							'<cite>- ' + Cite + '</cite>' + '</blockquote>');
+						$('.pageWrapper').css('background', 'url(' + ImageLink + ') no-repeat');	
+						$('.pageWrapper').css('background-size', '110% 140%');	
+						$('.pageWrapper').css('background-position', 'var(--x) var(--y)');
+					});
+				}
+			}
+
+			let error404_list = [
+				new ErrorMessage (
+					"Ничего плохого в том, что вы иногда ошибаетесь, нет, главное – быстро это обнаруживать.",
+					"Джон Мейнард Кейнс",
+					"https://regnum.ru/uploads/pictures/news/2017/07/03/regnum_picture_1499084424395764_normal.jpg"
+				),
+				new ErrorMessage (
+					"Мы не должны стыдиться признавать свои ошибки, что означает только то, что сегодня мы мудрее, чем были вчера.",
+					"Александр Поуп",
+					"http://www.perevodsinch.ru/uploads/posts/2017-02/1486672662_1212.jpg"
+				),
+			];
+
+			error404_list[Math.floor(Math.random() * error404_list.length)].applyErrorMsg();	
+		</script>
+	</body>
+</html>

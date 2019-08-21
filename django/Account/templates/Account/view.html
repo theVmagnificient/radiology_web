@@ -1,0 +1,113 @@
+<html>
+
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'Account/style/main.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{% static 'Account/style/views.css' %}" />
+    
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+    <!-- <script src = "{% static 'p5/p5.min.js' %}"></script> -->
+    <!-- <script src="{% static 'p5/addons/p5.dom.min.js' %}"></script>  -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+
+    <script src = "{% static 'Account/loading.js' %}"></script>
+    <script src = "{% static 'Account/js/search_research.js' %}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', initResearchList);
+
+        function initResearchList() {
+            var elems = document.querySelectorAll('.collapsible');
+            var instances = M.Collapsible.init(elems);
+        }
+    </script>
+</head>
+
+<body>
+    <div class = "loader" name = "loader" id = "loader">
+    </div>
+
+    {% block topbar %} {% include 'Account/topbar.html' %} {% endblock %}
+    {% block sidebar %} {% include 'Account/sidebar.html' %} {% endblock %}
+
+    <div class="row">
+        <div class = "col s1"></div>
+        <div class="col s6">
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="searchResearchInput" type="text" class="validate">
+              <label for="searchResearchInput">Поиск исследования</label>
+              <span class="helper-text">Введите номер исследования</span>
+            </div>
+          </div>
+        </div>
+        <div class = "col s2" style="padding-top: 1%;">
+            <p class = "center-align">
+                <a class="waves-effect waves-light btn" onclick = "searchResearch()" id = "findResButton">
+                    <i class="material-icons right">search</i>
+                найти
+                </a>
+            </p>
+        </div>
+        <div class = "col s2" style="padding-top: 1%;">
+            <p class = "center-align">
+                <a class="waves-effect waves-light btn" id = "uploadResearch" onclick="uploadResearch()">
+                    <i class="material-icons right">cloud_upload</i>
+                    загрузить
+                </a>
+            </p>
+        </div>
+        <div class = "col s1"></div>
+    </div>
+    <div class = "row">
+        <div class = "center-flexbox">
+            <div class = "col s1"></div>
+            <div class = "col s10" id = "uploadResearchContainer"></div>
+            <div class = "col s1"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="center-flexbox">
+            <div class="col s1"></div>
+            <div class="col s10 center-align" id = "researchListContainer">
+                <ul class="collapsible">
+                    {% for d in data %}
+                    <li class = "show{{ d.id }} showBase">
+                        <div class="collapsible-header"><i class="material-icons series_icon">local_see</i>
+                            <p class="truncate"><b>{{d.id}}. </b> {{ d.series.SeriesInstanceUID }} </p>
+                        </div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="col s12 m6 series_info">
+                                    <p class="truncate"><b>Patient ID: </b> {{ d.series.PatientID }} </p>
+                                    <p class="truncate"><b>Study ID: </b> {{ d.series.StudyID }} </p>
+                                    <p><b>Слои:</b> {{ d.series.slicesCnt }}</p>
+                                    <br /><br /><a href="/series/view?id={{d.series.id}}">Полный просмотр</a>
+                                </div>
+                                <div class="col s12 m6">
+                                    <img src='/media/images/{{ d.series.slices_dir }}/{{ d.series.previewSlice }}'
+                                        class="series_preview" />
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col s1"></div>
+        </div>
+    </div>
+    {% csrf_token %}
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+    <script src = "{% static 'Account/js/upload_research.js' %}"></script>
+
+</body>
+
+</html>

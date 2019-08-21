@@ -1,0 +1,41 @@
+{% block sidebar %}
+<a href="#" data-target="slide-out" class="sidenav-trigger">
+    <i class="medium material-icons">menu</i>
+</a>
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/Hnd01gaCiu89hpk4/videoblocks-transmitting-signals-to-the-neurons-active-neural-network-the-activity-of-blue-structures-that-transmit-signals-in-different-corners-of-the-screen-black-background-place-for-text-plexus_szwar989m_thumbnail-full01.png">
+            </div>
+                <a href="#user"><img class="circle" src="/media/{{ extUser.ava.name }}"></a>
+            <a href="#name"><span class="white-text name"> {{ user.surname }} {{ user.name }} </span></a>
+            <a href="#email"><span class="white-text email">  {{ user.mail }}  </span></a>
+        </div>
+    </li>
+    <li><a href="/home">Личный кабинет</a></li>
+    <li><a href="/home/predict">Предсказать</a></li>
+    <li><a href="/home/view">Просмотреть</a></li>
+    <li><a class="waves-effect" href="/home/statistics">Статистика</a></li>
+    <li><div class="divider"></div></li>
+    <li><a href="/auth/logout">Выйти</a></li>
+    <!-- <li><a class="subheader">Другое</a></li> -->
+</ul>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(elems);
+        });
+
+        // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
+        // var collapsibleElem = document.querySelector('.collapsible');
+        // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
+
+        // Or with jQuery
+
+        $(document).ready(function(){
+            $('.sidenav').sidenav();
+        });
+</script>
+{% endblock %}

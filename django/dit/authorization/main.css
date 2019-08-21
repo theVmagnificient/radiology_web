@@ -1,0 +1,48 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+@keyframes backgroundBlurAnimation {
+	0% {
+		 -webkit-filter: blur(1px);
+		  -moz-filter: blur(1px);
+		  -o-filter: blur(1px);
+		  -ms-filter: blur(1px);
+		  filter: blur(1px);
+	}
+	100% {
+		-webkit-filter: blur(0px);
+		-moz-filter: blur(0px);
+		-o-filter: blur(0px);
+		-ms-filter: blur(0px);
+		filter: blur(0px);
+	}
+}
+
+.pageWrapper {
+	animation: 2s ease-out 0s 1 backgroundBlurAnimation;
+	--x: 0px;
+    --y: 0px;
+	height: 100%;
+	background: url("./mos.jpg") no-repeat center center;
+	background-position: var(--x) var(--y);
+	background-size: 110% 140%;
+}
+
+.formWrapper {
+	margin: 40px;
+	background-color: #d9d9d9;
+	border-radius: 2px;
+}
+
+.error_msg {
+	color:red;
+}
+
+.success_msg {
+	color: green;
+}
