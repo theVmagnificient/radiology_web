@@ -1,0 +1,344 @@
+# Configuration file for radio framework
+
+# These are default values that can be redefined
+# by environment variables with corresponding names
+GLOBAL: {
+  RADIO_PATH: 'radio',
+  RADIO_CROPS_PATH: 'radio/crops',
+  RADIO_EXPERIMENTS_PATH: 'radio/experiments',
+  RADIO_DATASETS_PATH: 'radio/datasets',
+  RADIO_PRETRAINED_PATH: 'radio/pretrained',
+  RADIO_LOGS_PATH: 'radio/logs'
+}
+
+preprocessing: {
+  # Configuration of preprocessing step
+  # when all scans are resized to have
+  # the same spacing. After that
+  # padding is added to scan or
+  # it is cropped to have given shape.
+  unify_spacing: {
+
+    # Shape of scan after preprocessing
+    shape: [400, 512, 512],
+
+    # Spacing of scan after preprocessing
+    spacing: [1.7, 1.0, 1.0],
+
+    # Method that is used for resize. Can be 'scipy' or 'pil-simd'.
+    method: "scipy",
+
+    # Order of interpolation. Can be int from 1 - 5 interval.
+    order: 3,
+
+    # Padding mode. Can be one of following strings
+    # "reflect", "zeros", "constant".
+    padding: "reflect"
+  },
+  # Whether to perform hu_normalization on preprocessing step or not.
+  normalize_hu: False,
+
+  # Type of mask that will be created.
+  # Can be "ellipsoid" or "cuboid"
+  mask_mode: "ellipsoid"
+
+}
+
+accumulate_histo: {
+  # Number of initial random samples for histogram
+  # Adding random samples into histogram allows to avoid
+  # situation when some regions of scan were not used
+  # in crops sampling process because histogram contains
+  # zero value for corresponding bin.
+  num_samples: 128,
+
+  # Size of batch containing scans
+  # that will be used for histogram creation.
+  # This parameter affects RAM and CPU consumption,
+  # because all items in batch are processed in
+  # a parallel manner.
+  batch_size: 8,
+
+  # Number of bins along (z, y, x) axes
+  bins: [8, 8, 8]
+
+}
+
+create_crops: {
+  # Size of crops along (z, y, x) dimensions
+  crop_size: [32, 64, 64],
+
+  # Expected number of crops that will sampled per scan.
+  # Note that expected number of crops is the same for
+  # cancerous and non cancerous crops.
+  rate: 160,
+
+  # Variance of crops' centers location for cancerous
+  # crops. It's a kind of agumentation technique.
+  variance: [49, 169, 169],
+
+  batch_size: 8
+}
+
+
+# Configuration of training process
+training: {
+  # Number of training epochs
+  num_epochs: 50,
+
+  # Number of training steps per each
+  # training epoch.
+  steps_per_epoch: 1000,
+
+  # Batch size for cancerous and non-cancerous crops
+  crops_batch_sizes: [4, 4],
+
+  # Whether to log model or not.
+  log_model: True
+}
+
+evaluation: {
+  # Size of batch containing full scans
+  # used in preprocess
+  scans_batch_size: 8,
+
+  # Threshold value for mask pixel to consider them
+  # cancerous after prediction
+  threshold: 0.35,
+
+  # Parameters of prediction on scan process in deploy mode.
+  # Size of batch containing crops that will be directly passed into
+  # neural network for prediction. This parameters directly
+  # affects number of GPU memory that will be required.
+  # Another parameter is 'strides'. Strides are simply the step with
+  # which predicions on crops are performed.
+  predict_on_scan: {
+    crop_shape: [32, 64, 64],
+    strides: [32, 64, 64],
+    batch_size: 8,
+
+  # Parameters below should not be changed for
+  # pytorch models.
+    data_format: "channels_first",
+    model_type: "callable",
+    targets_mode: "segmentation_targets"
+  }
+}
+
+deploy: {
+
+  predict_on_scan: {
+    crop_shape: [32, 64, 64],
+    strides: [32, 64, 64],
+    batch_size: 4,
+
+  # Parameters below should not be changed for
+  # pytorch models.
+    data_format: "channels_first",
+    model_type: "callable",
+    targets_mode: "segmentation_targets"
+  },
+
+  # Probability threshold for predicted segmentation mask pixels.
+  mask_proba_threshold: 0.1,
+  use_classifier: True,
+  use_segmentator: True,
+  use_malignator: True,
+
+  distributed: {
+
+    # Timeout for worker heartbeat
+    # to consider it 'dead'.
+    heartbeat_timeout: 0.005,
+
+    # Period of workers' heartbeat interval
+    heartbeat_interval: 0.04,
+
+    # Sleep time for heartbeat process
+    sleep_time: 0.2,
+
+    # Connection timeout for distributed system
+    connection_timeout: 30.5,
+
+    # Nome of docker container where distributed system will run.
+  },
+  gui_server: {
+    preprocessing: {
+      # Shape of scan after preprocessing
+      shape: [400, 400, 400],
+
+      # Spacing of scan after preprocessing
+      spacing: [1.7, 1.0, 1.0],
+
+      # Method that is used for resize. Can be 'scipy' or 'pil-simd'.
+      method: "scipy",
+
+      # Order of interpolation. Can be int from 1 - 5 interval.
+      order: 3,
+
+      # Padding mode. Can be one of following strings
+      # "reflect", "zeros", "constant".
+      padding: "reflect"
+    }
+  }
+}
+
+logging : {
+
+  version: 1,
+  disable_existing_loggers: False,
+
+  formatters: {
+    default_formatter: {
+      class: "logging.Formatter",
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(threadName)s \n%(message)s"
+    }
+  },
+
+  handlers: {
+
+    console: {
+      level: "ERROR",
+      class: "logging.StreamHandler",
+      formatter: "default_formatter"
+    },
+
+    dispatcher_logfile: {
+      level: "INFO",
+      class: "logging.handlers.RotatingFileHandler",
+      backupCount: 1,
+      maxBytes: 5242880,
+      formatter: "default_formatter",
+      filename: "{RADIO_LOGS_PATH}/dispatcher.log"
+    },
+
+    dispatcher_heartbeat: {
+      level: "INFO",
+      class: "logging.handlers.TimedRotatingFileHandler",
+      when: 'M',
+      interval: 15,
+      backupCount: 1,
+      filename: "{RADIO_LOGS_PATH}/dispatcher.heartbeat.log",
+      formatter: "default_formatter"
+    }
+
+  },
+
+  loggers: {
+
+    root: {
+      level: "ERROR",
+      handlers: []
+    },
+
+    RadIO : {
+      level: "ERROR",
+      handlers: ["console"]
+    },
+
+    RadIO.worker: {
+      level: "DEBUG",
+      handlers: ["console"]
+    },
+
+    RadIO.worker.heartbeat: {
+      level: "DEBUG",
+      handlers: ["console"]
+    },
+
+    RadIO.dispatcher: {
+      level: "DEBUG",
+      handlers: ["console", "dispatcher_logfile"]
+    },
+
+    RadIO.dispatcher.heartbeat: {
+      level: "DEBUG",
+      handlers: ["dispatcher_heartbeat"]
+    }
+
+  }
+
+}
+
+
+models: {
+
+  VGG: {
+    input_block: {
+      layout: "cna",
+      c: {
+        kernel_size: 3,
+        filters: 32,
+        stride: [1, 2, 2]
+      }
+    },
+    head_block: {
+      layout: "> fna fna fa",
+      f: {
+        out_features: [4096, 4096, 2]
+      },
+      a: {
+        activation: ["relu", "relu", "linear"]
+      }
+    }
+  },
+
+  ResNet: {
+    input_block: {
+      layout: "cna",
+      c: {
+        kernel_size: 7,
+        filters: 32,
+        stride: [1, 2, 2]
+      },
+      a: {
+        activation: "sigmoid"
+      }
+    }
+  },
+
+  DenseNet: {
+    input_block: {
+      layout: "cna",
+      c: {
+        kernel_size: 7,
+        filters: 32,
+        stride: [1, 2, 2]
+      },
+      a: {
+        activation: "sigmoid"
+      }
+    }
+  },
+
+  UNet: {
+    head_block: {
+      layout: "ca",
+      c: {
+        kernel_size: 1,
+        filters: 1,
+        stride: 1,
+        bias: True
+      },
+      a: {
+        activation: "sigmoid"
+      }
+    }
+  },
+
+  VNet: {
+    head_block: {
+      layout: "ca",
+      c: {
+        kernel_size: 1,
+        filters: 1,
+        stride: 1,
+        bias: True
+      },
+      a: {
+        activation: "sigmoid"
+      }
+    }
+  }
+
+}
