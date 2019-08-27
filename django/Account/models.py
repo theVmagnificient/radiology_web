@@ -39,7 +39,7 @@ def getAvaName(instance, filename):
 class ExtendedUser(models.Model):
     userID = models.IntegerField()
     ava = models.ImageField(upload_to=getAvaName)
-    standartAvaDir = 'avatars/'
+    standartAvaDir = 'static/avatars/'
 
     def __str__(self):
         return "Extended User ({})".format(self.userID)

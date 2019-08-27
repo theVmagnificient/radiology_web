@@ -4,7 +4,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator, OriginValidator
 
-from Slicer.consumers import UploadResearchConsumer, UploadPredictionMask
+# from Slicer.consumers import UploadResearchConsumer, UploadPredictionMask
 from Account.consumers import ChatConsumer
 
 application = ProtocolTypeRouter({
@@ -13,8 +13,8 @@ application = ProtocolTypeRouter({
 		AuthMiddlewareStack(
 			URLRouter(
 				[
-					path("uploadResearch/", UploadResearchConsumer),
-					path("uploadPredictionMask/", UploadPredictionMask),
+					# path("uploadResearch/", UploadResearchConsumer),
+					# path("uploadPredictionMask/", UploadPredictionMask),
 					url(r"^chat/(?P<username>[\w]+)/$", ChatConsumer),
 				]
 			)

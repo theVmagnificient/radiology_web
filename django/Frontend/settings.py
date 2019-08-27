@@ -138,8 +138,8 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 1024*1024*50000
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1024*1024*50000
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "research_storage"),
+]

@@ -1,78 +1,6 @@
 let uploadContainer = $("#uploadResearchContainer");
 let loc = window.location;
 
-let endpoint = (loc.protocol == "https:" ? "ws://" : "ws://") + loc.host + "/uploadResearch/";
-let socket;
-
-let timeoutWebsocketReqID;
-
-function showError() {
-
-}
-
-function startDelayedWebsocketRequest(socketData) {
-	timeoutWebsocketReqID = window.setInterval(function() {
-		socket.send(JSON.stringify(socketData));
-	}, 1000);
-}
-
-function stopDelayedWebsocketRequest() {
-	window.clearInterval(timeoutWebsocketReqID);
-}
-
-function followFile(response) {
-	if (response["filename"] == null || !response["ok"]) {
-		renderLoadingResearche("Ошибка при загрузке файла. Повторите попытку позже.", 0);
-		return;
-	}
-	
-	filename = response["filename"]
-	renderLoadingResearche("Файл загружен. Подключаемся к серверу...", -1);
-
-	socket = new ReconnectingWebSocket(endpoint);
-	socket.onopen = function(e) {
-		renderLoadingResearche("Соединение установлено. Получение данных...", -1);
-		let socketData = {
-      		"filename": filename,
-    	}
-    	startDelayedWebsocketRequest(socketData);
-	}
-	socket.onmessage = function(e) {
-		let data = JSON.parse(e["data"]);
-		console.log(data);
-
-		let progress = parseFloat(data["progress"])
-		let roundedProgress = Math.round(progress)
-		let status = parseInt(data["status"])
-
-		if (status == 1) {
-			renderLoadingResearche(`Извлекаем снимки из архива... `, -1);
-		} else if (status == 2) {
-			renderLoadingResearche(`Обработка исследования. ${roundedProgress}%`, progress);
-        } else if (status == 3){
-            renderLoadingResearche(`Работаем с базой данных...`, -1);
-		} else if (status == 5) {
-			renderLoadingResearche("Исследование обработано. Обновляем данные...", -1);
-			stopDelayedWebsocketRequest()
-			window.setTimeout(function() {
-				window.location = "/home/view";
-			}, 2000);
-		}
-		else {
-			renderLoadingResearche("На сервере возникла ошибка.", -1);
-		}
-
-	}
-	socket.onerror = function(e) {
-		renderLoadingResearche("Возникла ошибка на сервере. Обработка не завершена.", 0);
-		stopDelayedWebsocketRequest()
-	}
-	socket.onclose = function(e) {
-		renderLoadingResearche("Соединение разорвано. Переподключаемся...", -1);
-		stopDelayedWebsocketRequest()
-	}
-}
-
 function renderLoadingResearche(status, progress=-1) {
 	if (uploadContainer.html() == "") {
 		let htmlContent = `
@@ -104,7 +32,6 @@ function renderLoadingResearche(status, progress=-1) {
 
 
 function uploadResearch() {
-    const url = '/home/uploadResearch';
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].getAttribute("value")
 
     function csrfSafeMethod(method) {
@@ -112,7 +39,7 @@ function uploadResearch() {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
-    let uploadAvaForm = `<form id = "uploadResearchForm" action="/home/uploadResearch" enctype="multipart/form-data">'
+    let uploadAvaForm = `<form id = "uploadResearchForm" action="/series/upload_research" enctype="multipart/form-data">'
         <div class="file-field input-field">
             <div class="btn">
                 <span>Загрузите архив</span>
@@ -145,13 +72,34 @@ function uploadResearch() {
                 xhr.open('POST', form.getAttribute('action'), true);
                 xhr.setRequestHeader("X-CSRFToken", token);
 
+				xhr.upload.addEventListener("progress", function(evt){
+					if (evt.lengthComputable) {
+						var percentComplete = (evt.loaded / evt.total) * 100;
+						renderLoadingResearche("Загрузка файла на сервер", percentComplete);
+						if (percentComplete == 100) {
+							renderLoadingResearche("Обработка исследования...");
+						}
+					}
+			   }, false);
+
+			   xhr.onreadystatechange = function() {
+					if(xhr.readyState === 4 && xhr.status === 200) {
+						let resp = xhr.response;
+						if (resp.ok) {
+							window.location = "/home/view";
+						} else {
+							Swal.fire({
+								type: 'error',
+								title: 'Ошибка',
+								text: resp.error,
+							});
+							uploadContainer.html(" ");
+						}
+				  	}
+				}
+
                 xhr.responseType = 'json';
-
-                xhr.addEventListener("load", function(){
-                	followFile(this.response);
-                });
-
-                xhr.send(formData);
+				xhr.send(formData);
             }).then(value => {
                 console.log("VALUE: ", value)
             }, reason => {
