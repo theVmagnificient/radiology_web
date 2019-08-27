@@ -1,161 +1,77 @@
-from Frontend import settings
-import time, os, zipfile, random, string, tempfile, gdcm, json, io
-from matplotlib import pyplot as plt
-from matplotlib.patches import Ellipse
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+from .models import Research
+import matplotlib.pyplot as plt
+from matplotlib import cm
 import pydicom as dicom
-from .models import ImageSeries
-import pandas as pd
+import zipfile
+import json
+import os
 
-COLOR_MAPS = ("COLORMAP_BONE", "COLORMAP_JET", "COLORMAP_HOT")
-cmaps = {"bone": plt.cm.bone, "gray": plt.cm.gray}
+MAX_RESEARCH_SIZE = 1000 # in megabytes
 
-def GetCurrentPredictFromCSV(fileBytes, sourceID):
-	df = pd.read_csv(io.BytesIO(fileBytes), encoding='utf8')
-	if "source_id" not in df.columns:
-		return {"ok": False, "err": "Колонка 'source_id' отсутствует в файле"}
-	res = df[df.source_id == sourceID]
-	if res.shape[0] == 0:
-		return {"ok": False, "err": "В данном файле отсутствуют данные о исследовании %s" % sourceID}
-	return {"ok": True, "res": res} 
+def zip_validation(research):
+    if research.name.split(".")[-1] != "zip":
+        return {"ok": False, "error": "Zip file required"}
+    if research.size > 1024 * 1024 * MAX_RESEARCH_SIZE:
+        return {"ok": False, "error": "File is too large"}
+    return {"ok": True}
 
+def extract_zip(zip_path):
+    extract_dir = os.path.join(settings.BASE_DIR, "research_storage", "".join(zip_path.split("/")[-1].split(".")[:-1]))
 
-def dicom_dataset_to_dict(dicom_header):
-	dicom_dict = {}
-	repr(dicom_header)
-	for dicom_value in dicom_header.values():
-		if dicom_value.tag == (0x7fe0, 0x0010):
-			# discard pixel data
-			continue
-		if type(dicom_value.value) == dicom.dataset.Dataset:
-			dicom_dict[dicom_value.keyword] = dicom_dataset_to_dict(dicom_value.value)
-		else:
-			v = _convert_value(dicom_value.value)
-			if dicom_value.keyword == "SeriesInstanceUID":
-				v = v[1:-1]
-			dicom_dict[dicom_value.keyword] = v
-	return dicom_dict
+    if not zipfile.is_zipfile(zip_path):
+        return {"ok": False, "error": "Invalid zip file"}
 
-def _sanitise_unicode(s):
-	return s.replace(u"\u0000", "").strip()
+    dicoms = 0
+    filenames = list()
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
+        for fn in zip_ref.filelist:
+            if fn.filename.split(".")[-1] != "dcm":
+                return {"ok": False, "error": "Expected archive with .dicom files"}
+            filenames.append(fn.filename)
+            dicoms += 1
+        if dicoms == 0:
+            return {"ok": False, "error": "No dicom files in root of archive"}
+        zip_ref.extractall(extract_dir)
+        
+    return {"ok": True, "extract_dir":  extract_dir, "filenames": filenames}
 
-def _convert_value(v):
-	t = type(v)
-	if t in (list, int, float):
-		cv = v
-	elif t == str:
-		cv = _sanitise_unicode(v)
-	elif t == bytes:
-		s = v.decode('ascii', 'replace')
-		cv = _sanitise_unicode(s)
-	elif t == dicom.valuerep.DSfloat:
-		cv = float(v)
-	elif t == dicom.valuerep.IS:
-		cv = int(v)
-	elif t == dicom.valuerep.PersonName3:
-		cv = str(v)
-	else:
-		cv = repr(v)
-	return cv
+def export_to_png(dcm, path):
+    fig = plt.figure(frameon=False, dpi=300)
+    ax = plt.Axes(fig, [0., 0., 1., 1.])
+    ax.set_axis_off()
+    fig.add_axes(ax)
+    ax.imshow(dcm.pixel_array, cmap=plt.cm.gray)
+    plt.savefig(path)
+    plt.close()
 
-def getDicomListFromZip(zipFileName):
-	zipFilePath = "{}/zips/{}".format(settings.MEDIA_ROOT, zipFileName)	
+def process(params):
+    dcm = dicom.dcmread(os.path.join(params["extract_dir"], os.listdir(params["extract_dir"])[0]))
+    export_to_png(dcm, os.path.join(params["extract_dir"], "preview.png"))
+    research = Research.objects.create(study_date=dcm.StudyDate, study_time=dcm.StudyTime, 
+                    patient_id=dcm.PatientID, series_instance_uid=dcm.SeriesInstanceUID,
+                    series_number=dcm.SeriesNumber, dir_name=os.path.basename(params["extract_dir"]),
+                    zip_name=params["zip_name"], dicom_names=json.dumps(params["filenames"]))
+    
+    research.save()
 
-	datasets = list()
-	with zipfile.ZipFile(zipFilePath) as researchZip:
-		for entry in researchZip.namelist():
-			if entry.endswith('/'):
-				continue  # skip directories
-			entryPseudoFile = researchZip.open(entry)
+def handle_research(research):
+    fs = FileSystemStorage()
+    valid = zip_validation(research)
 
-			dicomTempFile = tempfile.NamedTemporaryFile()
-			dicomTempFile.write(entryPseudoFile.read())
-			dicomTempFile.flush()
-			dicomTempFile.seek(0)
+    if not valid["ok"]:
+        return valid
 
-			try:
-				dataset = dicom.read_file(dicomTempFile)
-				dataset.pixel_array
-				datasets.append(dataset)
-			except dicom.errors.InvalidDicomError as e:
-				print(e)
-				pass
+    zip_path = os.path.join(settings.BASE_DIR, "research_storage", "zips", research.name)
+    zip_path = fs.save(zip_path, research)
 
-	datasets.sort(key=lambda x: x.ImagePositionPatient[2])
-	return datasets
+    resp = extract_zip(zip_path)
+    if not resp["ok"]:
+        return resp
+    resp["zip_name"] = os.path.basename(zip_path)
 
-def SliceResearch(filename, status, progress):
-	status.value = 1
-	
-	datasets = getDicomListFromZip(filename)
-	datasetsCnt = len(datasets)
-	if datasetsCnt == 0:
-		status.value = 124
-		return
+    process(resp)
 
-	dicom_dict = dicom_dataset_to_dict(datasets[0])
-	dicom_dict["slicesCnt"] = len(datasets)
-	dicom_dict_json = json.dumps(dicom_dict)
-	status.value = 2
-
-	slicesDir = ''.join(random.choice(string.ascii_lowercase) for x in range(10))
-
-	imageDirPath = "{}/images/{}".format(settings.MEDIA_ROOT, slicesDir)
-	while os.path.exists(imageDirPath):
-		imageDirPath += random.choice(string.ascii_lowercase)
-
-	os.makedirs(imageDirPath)
-
-	for n, ds in enumerate(datasets):
-		image = str(n) + "_{}.png"
-		for cmName, cm in cmaps.items():
-			fig = plt.figure(frameon=False, dpi=300)
-			ax = plt.Axes(fig, [0., 0., 1., 1.])
-			ax.set_axis_off()
-			fig.add_axes(ax)
-			ax.imshow(ds.pixel_array, cmap=cm)     
-			plt.savefig(os.path.join(imageDirPath, image.format(cmName)))
-			plt.close()
-		progress.value = (n * 100) / datasetsCnt
-
-	status.value = 3
-	ImageSeries.objects.create(dcm_meta=dicom_dict_json, slices_dir=slicesDir, zipFileName=filename)
-
-
-def AddPredictionMask(zipFileName, seriesInfo, mask, status, progress):
-	status.value = 1
-
-	datasets = getDicomListFromZip(zipFileName)
-	datasetsCnt = len(datasets)
-	if datasetsCnt == 0:
-		status.value = 124
-		return
-
-	status.value = 2
-
-	file_csv = open(settings.MEDIA_ROOT + "/masks_model/" + mask.fileName, "rb").read()
-	df = GetCurrentPredictFromCSV(file_csv, seriesInfo.source_id)["res"]
-	
-	imageDirPath = "{}/images/{}/{}".format(settings.MEDIA_ROOT, seriesInfo.slices_dir,
-		mask.maskFolder)
-	for n, ds in enumerate(datasets):
-		image = str(n) + "_{}.png"
-		for cmName, cm in cmaps.items():
-			fig = plt.figure(frameon=False, dpi=300)
-			ax = plt.Axes(fig, [0., 0., 1., 1.])
-			ax.set_axis_off()
-			fig.add_axes(ax)
-
-			ax.set_aspect('equal')
-			ax.imshow(ds.pixel_array, cmap=cm)
-
-			for i, row in df.iterrows():
-				ellipse = Ellipse(xy=(row.locX, row.locY), width=row.diamX, height=row.diamY,
-				 edgecolor="r", lw=2, fill=False)
-				ax.add_patch(ellipse)
-
-			plt.savefig(os.path.join(imageDirPath, image.format(cmName)))
-			plt.close()
-		progress.value = (n * 100) / datasetsCnt
-
-	status.value = 3
-	
+    return {"ok": True}
+    

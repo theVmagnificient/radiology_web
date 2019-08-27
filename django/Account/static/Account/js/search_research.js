@@ -40,32 +40,33 @@ function renderResearches(json) {
 	if (res.length == 0) {
 		$("#researchListContainer").html("<h1> Ничего не найдено </h1>");
 	} else {
-		console.log(res);
 		let resCnt = 0;
 		htmlContent = '<ul class="collapsible">';
 		$.each(res, function(key, value) {
-			resCnt++;
-			htmlContent += `
-				<li class = "show${resCnt} showBase">
+            console.log(value);
+            resCnt++;
+            htmlContent += `
+                <li class = "show${resCnt} showBase">
                     <div class="collapsible-header"><i class="material-icons series_icon">local_see</i>
-                        <p class="truncate"><b>${resCnt}. </b> ${value.fields.SeriesInstanceUID} </p>
+                        <p class="truncate"><b>${resCnt}. </b> ${value.fields.series_instance_uid} </p>
                     </div>
                     <div class="collapsible-body">
                         <div class="row">
                             <div class="col s12 m6 series_info">
-                                <p class="truncate"><b>Patient ID: </b> ${ value.fields.PatientID } </p>
-                                <p class="truncate"><b>Study ID: </b> ${ value.fields.StudyID } </p>
-                                <p><b>Слои:</b> ${ value.fields.slicesCnt } </p>
-                                <br /><br /><a href="/series/view?id=${value.fields.seriesID}">Полный просмотр</a>
+                                <p class="truncate"><b>Patient ID: </b> ${value.fields.patient_id} </p>
+                                <p class="truncate"><b>Слайсов: </b> ${JSON.parse(value.fields.dicom_names).length} </p>
+                                <br /><br />
+                                <a href="/series/view/${value.pk}">Полный просмотр</a>
+                                <a href="/static/zips/${value.fields.zip_name}" style="margin-left:2%;">Скачать архив</a>
                             </div>
                             <div class="col s12 m6">
-                                <img src='/media/images/${value.fields.slices_dir}/${value.fields.previewSlice}'
+                                <img src='/static/${value.fields.dir_name}/preview.png'
                                     class="series_preview" />
                             </div>
                         </div>
                     </div>
                 </li>
-			`;
+            `;
 		});
 		htmlContent += '</ul>';
 		$("#researchListContainer").html(htmlContent);

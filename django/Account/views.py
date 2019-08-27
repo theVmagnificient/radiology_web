@@ -5,7 +5,7 @@ from django.core.files.storage import default_storage
 from .models import HashPassword, User, Feedback, ExtendedUser
 from Frontend import settings
 from Frontend.TelegramBot import send as telegram_send
-from Slicer.models import ImageSeries, SeriesInfo
+from Slicer.models import Research
 import os, json, time, subprocess, datetime, urllib
 
 def runCommand(commands):
@@ -21,13 +21,13 @@ def runShell(path, sh_input = ''):
 def buildJSONResponse(responseData):
 	return HttpResponse(json.dumps(responseData), content_type="application/json")
 
-def getResearchView(request):
-    if 'id' not in request.GET:
-        return buildJSONResponse({"ok": False, "error": "Invalid request"})
-    if not ImageSeries.objects.filter(id=request.GET['id']):
-        return buildJSONResponse({"ok": False, "error": "This research doesn`t exists"})
-    series = ImageSeries.objects.get(id=request.GET['id'])
-    return buildJSONResponse({"ok": True, "dirname": series.media_path})
+# def getResearchView(request):
+#     if 'id' not in request.GET:
+#         return buildJSONResponse({"ok": False, "error": "Invalid request"})
+#     if not ImageSeries.objects.filter(id=request.GET['id']):
+#         return buildJSONResponse({"ok": False, "error": "This research doesn`t exists"})
+#     series = Research.objects.get(id=request.GET['id'])
+#     return buildJSONResponse({"ok": True, "dirname": series.media_path})
 
 def account(request):
     if 'id' not in request.session:
@@ -46,7 +46,7 @@ def view(request):
 
     data = list()
 
-    series = SeriesInfo.objects.all()
+    series = Research.objects.all()
     for i, s in enumerate(series):
         data.append({"id": i + 1, "series": s})
 
@@ -142,9 +142,9 @@ def searchResearch(request):
         return HttpResponse("invalid request")
     word = "".join(request.POST["word"].split())
     if word == "":
-        res = SeriesInfo.objects.all()
+        res = Research.objects.all()
     else:
-        res = SeriesInfo.objects.filter(SeriesInstanceUID__icontains=word)
+        res = Research.objects.filter(series_instance_uid__icontains=word)
     res = serializers.serialize('json', res)
     return buildJSONResponse({"ok": True, "res": res})
 

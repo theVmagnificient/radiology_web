@@ -81,18 +81,19 @@
                     {% for d in data %}
                     <li class = "show{{ d.id }} showBase">
                         <div class="collapsible-header"><i class="material-icons series_icon">local_see</i>
-                            <p class="truncate"><b>{{d.id}}. </b> {{ d.series.SeriesInstanceUID }} </p>
+                            <p class="truncate"><b>{{d.id}}. </b> {{ d.series.series_instance_uid }} </p>
                         </div>
                         <div class="collapsible-body">
                             <div class="row">
                                 <div class="col s12 m6 series_info">
-                                    <p class="truncate"><b>Patient ID: </b> {{ d.series.PatientID }} </p>
-                                    <p class="truncate"><b>Study ID: </b> {{ d.series.StudyID }} </p>
-                                    <p><b>Слои:</b> {{ d.series.slicesCnt }}</p>
-                                    <br /><br /><a href="/series/view?id={{d.series.id}}">Полный просмотр</a>
+                                    <p class="truncate"><b>Patient ID: </b> {{ d.series.patient_id }} </p>
+                                    <p class="truncate"><b>Слайсов: </b> {{ d.series.dicom_names_list | length }} </p>
+                                    <br /><br />
+                                    <a href="/series/view/{{d.series.id}}">Полный просмотр</a>
+                                    <a href="/static/zips/{{d.series.zip_name}}" style="margin-left:2%;">Скачать архив</a>
                                 </div>
                                 <div class="col s12 m6">
-                                    <img src='/media/images/{{ d.series.slices_dir }}/{{ d.series.previewSlice }}'
+                                    <img src='/static/{{ d.series.dir_name }}/preview.png'
                                         class="series_preview" />
                                 </div>
                             </div>
@@ -104,6 +105,7 @@
             <div class="col s1"></div>
         </div>
     </div>
+
     {% csrf_token %}
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
     <script src = "{% static 'Account/js/upload_research.js' %}"></script>

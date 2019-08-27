@@ -1,0 +1,425 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    {% load staticfiles %}
+    <!-- twitter bootstrap CSS stylesheet - included to make things pretty, not needed or used by cornerstone -->
+
+    <link rel="stylesheet" href="{% static 'Account/style/main.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="{% static 'Slicer/css/cornerstone.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/13.1.4/nouislider.min.css"></script>
+
+    <style>
+        .snapshot-container {
+            width: 100%;
+            height: 512px;
+            position: relative;
+            color: white;
+            display: inline-block;
+            border-style: solid;
+            border-color: black;
+        }
+
+        .snapshot {
+            width: 100%;
+            height: 512px;
+            top: 0px;
+            left: 0px;
+            position:absolute;
+        }
+    </style>
+</head>
+<body>
+
+{% block topbar %} {% include 'Account/topbar.html' %} {% endblock %}
+{% block sidebar %} {% include 'Account/sidebar.html' %} {% endblock %}
+
+
+<div class="row">
+    <form id="form" class="form-horizontal">
+    <input class="form-control" type="hidden" id="wadoURL" placeholder="Enter WADO URL">
+        {% comment %}<div class="form-group">
+            <div class="col-sm-2">
+                <button class="form-control" type="button" id="load" class="btn btn-primary">Load</button>
+            </div>
+            <div class="col-sm-2">
+                <button class="form-control" type="button" id="unload" class="btn btn-primary">Unload</button>
+            </div>
+            <div class="col-sm-2">
+                <button class="form-control" type="button" id="purge" class="btn btn-primary">Purge Cache</button>
+            </div>
+        </div>{% endcomment %}
+    </form>
+</div> 
+<br />
+<div class="row">
+    <div class="col m3">
+        <div class = "row">
+            <div class = "col s2"></div>
+            <div class = "col c10">
+                <div id="slice_id"><b>Слайс:</b> 1. <a href = "/static/{{research.dir_name}}/{{ research.dicom_names_list | first }}" /> Скачать </a></div>
+                <p>
+                    <label>
+                    <input type="checkbox" id="toggleModalityLUT"/>
+                    <span>Apply Modality LUT</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                    <input type="checkbox"  id="toggleVOILUT"/>
+                    <span>Apply VOI LUT</span>
+                    </label>
+                </p>
+
+                <a class="btn-floating btn-small waves-effect waves-light" id = "prev"><i class="material-icons">arrow_back
+</i></a>
+                <a class="btn-floating btn-small waves-effect waves-light" id = "next"><i class="material-icons">arrow_forward
+</i></a>
+            </div>
+        </div>
+    </div>
+    <div class="col m6">
+        <div class="progress" id="loadProgress">
+            <div class="determinate" id = "progress" style="width: 70%"></div>
+        </div>
+        <div class = "snapshot-container"
+                oncontextmenu="return false"
+                class='disable-selection noIbar'
+                unselectable='on'
+                onselectstart='return false;'
+                onmousedown='return false;'>
+            <div id="dicomImage" class="snapshot"> </div>
+        </div>
+        <div style = "width: 100%">
+            <div id="slice-slider"></div>
+        </div>
+    </div>
+    <div class="col m3"></div>
+</div>
+
+<div class = "row">
+  <div class = "col m2"></div>
+  <div class = "col m8">
+    <ul class="collapsible">
+            <li>
+            <div class="collapsible-header"><i class="material-icons">info</i> </b> Информация о снимке </div>
+                <div class="collapsible-body">
+                    <span>Transfer Syntax: </span><span id="transferSyntax"></span><br>
+                    <span>SOP Class: </span><span id="sopClass"></span><br>
+                    <span>Samples Per Pixel: </span><span id="samplesPerPixel"></span><br>
+                    <span>Photometric Interpretation: </span><span id="photometricInterpretation"></span><br>
+                    <span>Number Of Frames: </span><span id="numberOfFrames"></span><br>
+                    <span>Planar Configuration: </span><span id="planarConfiguration"></span><br>
+                    <span>Rows: </span><span id="rows"></span><br>
+                    <span>Columns: </span><span id="columns"></span><br>
+                    <span>Pixel Spacing: </span><span id="pixelSpacing"></span><br>
+                    <span>Row Pixel Spacing: </span><span id="rowPixelSpacing"></span><br>
+                    <span>Column Pixel Spacing: </span><span id="columnPixelSpacing"></span><br>
+                    <span>Bits Allocated: </span><span id="bitsAllocated"></span><br>
+                    <span>Bits Stored: </span><span id="bitsStored"></span><br>
+                    <span>High Bit: </span><span id="highBit"></span><br>
+                    <span>Pixel Representation: </span><span id="pixelRepresentation"></span><br>
+                    <span>WindowCenter: </span><span id="windowCenter"></span><br>
+                    <span>WindowWidth: </span><span id="windowWidth"></span><br>
+                    <span>RescaleIntercept: </span><span id="rescaleIntercept"></span><br>
+                    <span>RescaleSlope: </span><span id="rescaleSlope"></span><br>
+                    <span>Basic Offset Table Entries: </span><span id="basicOffsetTable"></span><br>
+                    <span>Fragments: </span><span id="fragments"></span><br>
+                    <span>Max Stored Pixel Value: </span><span id="minStoredPixelValue"></span><br>
+                    <span>Min Stored Pixel Value: </span><span id="maxStoredPixelValue"></span><br>
+                    <span>Total Time: </span><span id="totalTime"></span><br>
+                    <span>Load Time: </span><span id="loadTime"></span><br>
+                    <span>Decode Time: </span><span id="decodeTime"></span><br>
+            </div>
+            </li>
+    </ul>
+    </div>
+  <div class = "col m2"></div>
+</div>
+
+
+{% comment %} <div class = "row">
+  <div class = "col m2"></div>
+  <div class = "col m8">
+    <ul class="collapsible">
+            <li>
+            <div class="collapsible-header"><i class="material-icons">info</i> </b> Информация об исследовании </div>
+                <div class="collapsible-body">
+                    <span>Transfer Syntax: </span><br>
+            </div>
+            </li>
+        </ul>
+  <div class = "col m2"></div>
+</div> {% endcomment %}
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/13.1.4/nouislider.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="{% static 'Slicer/js/cornerstone.min.js' %}"></script>
+<SCRIPT src="{% static 'Slicer/js/cornerstoneMath.min.js' %}"></SCRIPT>
+<SCRIPT src="{% static 'Slicer/js/cornerstoneTools.min.js' %}"></SCRIPT>
+
+<!-- include the dicomParser library as the WADO image loader depends on it -->
+<script src="{% static 'Slicer/js/dicomParser.min.js' %}"></script>
+
+<!-- include the cornerstoneWADOImageLoader library -->
+{% comment %} <script src="../../dist/cornerstoneWADOImageLoader.js"></script> {% endcomment %}
+<script src="https://unpkg.com/cornerstone-wado-image-loader@3.0.0/dist/cornerstoneWADOImageLoader.min.js"></script>
+
+<script src="{% static 'Slicer/js/uids.js' %}"></script>
+
+<!-- Lines ONLY required for this example to run without building the project -->
+<script>window.cornerstoneWADOImageLoader || document.write('<script src="https://unpkg.com/cornerstone-wado-image-loader">\x3C/script>')</script>
+<script src="{% static 'Slicer/js/initializeWebWorkers.js' %}"></script>
+
+<script>
+    imageUrls = [
+        {% for dicom_names in research.dicom_names_list %}
+            `${window.location.origin}/static/{{ research.dir_name }}/{{ dicom_names }}`,
+        {% endfor %}
+    ];
+
+    let urlInput = document.getElementById("wadoURL");
+    urlInput.value = imageUrls[0];
+
+    let SLICE_ID = 0;
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(elems);
+    });     
+
+    var slider = document.getElementById('slice-slider');
+    noUiSlider.create(slider, {
+      start: [0,],
+      tooltips: true,
+      step: 1,
+      orientation: 'horizontal', // 'horizontal' or 'vertical'
+      range: {
+        'min': 1,
+        'max': imageUrls.length,
+      },
+      format: wNumb({
+        decimals: 0
+      }),
+    });
+</script>
+
+<script>
+    cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+
+    cornerstoneWADOImageLoader.configure({
+        beforeSend: function(xhr) {
+            // Add custom headers here (e.g. auth tokens)
+            //xhr.setRequestHeader('APIKEY', 'my auth token');
+        }
+    });
+
+    var loaded = false;
+
+    function loadAndViewImage(imageId) {
+        var element = document.getElementById('dicomImage');
+
+        try {
+            var start = new Date().getTime();
+            cornerstone.loadAndCacheImage(imageId).then(function(image) {
+                console.log(image);
+                var viewport = cornerstone.getDefaultViewportForImage(element, image);
+                document.getElementById('toggleModalityLUT').checked = (viewport.modalityLUT !== undefined);
+                document.getElementById('toggleVOILUT').checked = (viewport.voiLUT !== undefined);
+                cornerstone.displayImage(element, image, viewport);
+                if(loaded === false) {
+                    cornerstoneTools.mouseInput.enable(element);
+                    cornerstoneTools.mouseWheelInput.enable(element);
+                    cornerstoneTools.wwwc.activate(element, 1); // ww/wc is the default tool for left mouse button
+                    cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
+                    cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
+                    cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
+                    loaded = true;
+                }
+
+                function getTransferSyntax() {
+                    const value = image.data.string('x00020010');
+                    return value + ' [' + uids[value] + ']';
+                }
+
+                function getSopClass() {
+                    const value = image.data.string('x00080016');
+                    return value + ' [' + uids[value] + ']';
+                }
+
+                function getPixelRepresentation() {
+                    const value = image.data.uint16('x00280103');
+                    if(value === undefined) {
+                        return;
+                    }
+                    return value + (value === 0 ? ' (unsigned)' : ' (signed)');
+                }
+
+                function getPlanarConfiguration() {
+                    const value = image.data.uint16('x00280006');
+                    if(value === undefined) {
+                        return;
+                    }
+                    return value + (value === 0 ? ' (pixel)' : ' (plane)');
+                }
+
+
+                document.getElementById('transferSyntax').textContent = getTransferSyntax();
+                document.getElementById('sopClass').textContent = getSopClass();
+                document.getElementById('samplesPerPixel').textContent = image.data.uint16('x00280002');
+                document.getElementById('photometricInterpretation').textContent = image.data.string('x00280004');
+                document.getElementById('numberOfFrames').textContent = image.data.string('x00280008');
+                document.getElementById('planarConfiguration').textContent = getPlanarConfiguration();
+                document.getElementById('rows').textContent = image.data.uint16('x00280010');
+                document.getElementById('columns').textContent = image.data.uint16('x00280011');
+                document.getElementById('pixelSpacing').textContent = image.data.string('x00280030');
+                document.getElementById('rowPixelSpacing').textContent = image.rowPixelSpacing;
+                document.getElementById('columnPixelSpacing').textContent = image.columnPixelSpacing;
+                document.getElementById('bitsAllocated').textContent = image.data.uint16('x00280100');
+                document.getElementById('bitsStored').textContent = image.data.uint16('x00280101');
+                document.getElementById('highBit').textContent = image.data.uint16('x00280102');
+                document.getElementById('pixelRepresentation').textContent = getPixelRepresentation();
+                document.getElementById('windowCenter').textContent = image.data.string('x00281050');
+                document.getElementById('windowWidth').textContent = image.data.string('x00281051');
+                document.getElementById('rescaleIntercept').textContent = image.data.string('x00281052');
+                document.getElementById('rescaleSlope').textContent = image.data.string('x00281053');
+                document.getElementById('basicOffsetTable').textContent = image.data.elements.x7fe00010.basicOffsetTable ? image.data.elements.x7fe00010.basicOffsetTable.length : '';
+                document.getElementById('fragments').textContent = image.data.elements.x7fe00010.fragments ? image.data.elements.x7fe00010.fragments.length : '';
+                document.getElementById('minStoredPixelValue').textContent = image.minPixelValue;
+                document.getElementById('maxStoredPixelValue').textContent = image.maxPixelValue;
+                var end = new Date().getTime();
+                var time = end - start;
+                document.getElementById('totalTime').textContent = time + "ms";
+                document.getElementById('loadTime').textContent = image.loadTimeInMS + "ms";
+                document.getElementById('decodeTime').textContent = image.decodeTimeInMS + "ms";
+
+            }, function(err) {
+                alert(err);
+            });
+        }
+        catch(err) {
+            alert(err);
+        }
+    }
+
+    function downloadAndView() {
+        let url = document.getElementById('wadoURL').value;
+
+        // prefix the url with wadouri: so cornerstone can find the image loader
+        url = "wadouri:" + url;
+
+        // image enable the dicomImage element and activate a few tools
+        loadAndViewImage(url);
+    }
+
+    cornerstone.events.addEventListener('cornerstoneimageloadprogress', function(event) {
+        const eventData = event.detail;
+        let loadProgress = document.querySelector("#loadProgress").querySelector("#progress");
+        loadProgress.style.width = `${eventData.percentComplete}%`;
+    });
+
+    function getUrlWithoutFrame() {
+        var url = document.getElementById('wadoURL').value;
+        var frameIndex = url.indexOf('frame=');
+        if(frameIndex !== -1) {
+            url = url.substr(0, frameIndex-1);
+        }
+        return url;
+    }
+
+    var element = document.getElementById('dicomImage');
+    cornerstone.enable(element);
+
+    // document.getElementById('downloadAndView').addEventListener('click', function(e) {
+    //     downloadAndView();
+    // });
+    // document.getElementById('load').addEventListener('click', function(e) {
+    //     var url = getUrlWithoutFrame();
+    //     cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.load(url);
+    // });
+    // document.getElementById('unload').addEventListener('click', function(e) {
+    //     var url = getUrlWithoutFrame();
+    //     cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.unload(url);
+    // });
+
+    // document.getElementById('purge').addEventListener('click', function(e) {
+    //     cornerstone.imageCache.purgeCache();
+    // });
+
+    function updateSlice(slice_id, updateSLicer=false) {
+        document.getElementById('wadoURL').value = imageUrls[slice_id];
+        document.getElementById('slice_id').innerHTML = `
+        <b>Слайс:</b> ${slice_id + 1}. <a href = "/static/{{research.dir_name}}/${imageUrls[slice_id]}" /> Скачать </a
+        `;
+        if (updateSLicer) {
+            slider.noUiSlider.updateOptions({
+                start: SLICE_ID + 1,
+            });
+        }
+        downloadAndView();
+    }
+
+    document.getElementById('next').addEventListener('click', function(e) {
+        if (SLICE_ID == imageUrls.length - 1) SLICE_ID = -1;
+        updateSlice(++SLICE_ID, true);
+    });
+
+    document.getElementById('prev').addEventListener('click', function(e) {
+        if (SLICE_ID == 0) SLICE_ID = imageUrls.length;
+        updateSlice(--SLICE_ID, true);
+    });
+
+    slider.noUiSlider.on('change', function(values, handle, unencoded, tap, positions) {
+        console.log(values, handle, unencoded, tap, positions);
+
+        SLICE_ID = values[0] - 1;
+        updateSlice(SLICE_ID);
+    })
+
+    const form = document.getElementById('form');
+    form.addEventListener('submit', function() {
+        downloadAndView();
+        return false;
+    });
+
+    document.getElementById('toggleModalityLUT').addEventListener('click', function() {
+        var applyModalityLUT = document.getElementById('toggleModalityLUT').checked;
+        console.log('applyModalityLUT=', applyModalityLUT);
+        var image = cornerstone.getImage(element);
+        var viewport = cornerstone.getViewport(element);
+        if(applyModalityLUT) {
+            viewport.modalityLUT = image.modalityLUT;
+        } else {
+            viewport.modalityLUT = undefined;
+        }
+        cornerstone.setViewport(element, viewport);
+    });
+
+    document.getElementById('toggleVOILUT').addEventListener('click', function() {
+        var applyVOILUT = document.getElementById('toggleVOILUT').checked;
+        console.log('applyVOILUT=', applyVOILUT);
+        var image = cornerstone.getImage(element);
+        var viewport = cornerstone.getViewport(element);
+        if(applyVOILUT) {
+            viewport.voiLUT = image.voiLUT;
+        } else {
+            viewport.voiLUT = undefined;
+        }
+        cornerstone.setViewport(element, viewport);
+    });
+</script>
+
+<script>
+    downloadAndView();
+</script>
+</html>
