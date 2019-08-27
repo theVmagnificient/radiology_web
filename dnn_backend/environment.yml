@@ -45,6 +45,11 @@ dependencies:
   - six=1.12.0=py36_0
   - sqlite=3.29.0=h7b6447c_0
   - tk=8.6.8=hbc83047_0
+  - libopencv=3.4.2
+  - libstdcxx-ng=8.2.0
+  - opencv=3.4.2
+  - ipython
+  - tensorboardx=1.8
   - torchvision=0.4.0=py36_cu100
   - tqdm=4.33.0=py_0
   - wheel=0.33.4=py36_0

@@ -18,6 +18,11 @@ class Preprocess:
         except Exception as e:
             print(str(e))
 
+        try:
+            os.makedirs(self.c_path)
+        except:
+            pass
+
         self.n_workers = numWorkers
 
     def _extract(self):
@@ -51,7 +56,13 @@ class Preprocess:
             for file in f:
                 if r in pathsToDcm:
                     break
-                if '.dcm' in file and len(os.listdir(r)) > 100:
+
+                flag = True
+                try:
+                    ds = pydicom.dcmread(os.path.join(r, file))
+                except:
+                    flag = False
+                if flag and len(os.listdir(r)) > 100:
                     pathsToDcm.append(r)
         print("Lenght of dataset: " + str(len(pathsToDcm)))
 
@@ -68,7 +79,7 @@ class Preprocess:
         self._convert2format()
         print(f"Converted {len(os.listdir(self.c_path))} studies")
         print(f"Removing extracted files...")
-        shutil.rmtree(self.e_path)
+#        shutil.rmtree(self.e_path)
 
 
 

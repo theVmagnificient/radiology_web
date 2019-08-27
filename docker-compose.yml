@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+
+  dnn_backend:
+    build: ./dnn_backend
+    environment:
+      KAFKA_BROKER_URL: broker:9092
+      TRANSACTIONS_TOPIC: dnn.data
+    volumes:
+      - aimed_archives:/mnt/archives
+      - aimed_results:/mnt/results
+
+volumes:
+  aimed_archives:
+  aimed_results:
+
+networks:
+  default:
+    external:
+      name: kafka-network
+
+volumes:
+  aimed_archives:
+  aimed_results:
+
