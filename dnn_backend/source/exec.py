@@ -37,6 +37,7 @@ class Executor:
 
         try:
             os.makedirs(cf.save_path)
+            print("Directory created")
         except Exception as e:
             print(str(e))
 
@@ -56,7 +57,7 @@ class Executor:
 
 
 
-conf = Config()
+conf = Config('/mnt/results/exp_1')
 e = Executor(cf=conf)
-e.unpack('/data/DICOM_/5_test.zip', '/data/DICOM_/converted_test')
+e.unpack('/mnt/archives/out.zip', '/mnt/archives/tmp')
 e.start()

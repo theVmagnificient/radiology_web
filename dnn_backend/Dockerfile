@@ -15,7 +15,7 @@ RUN bash Miniconda-latest-Linux-x86_64.sh -p /miniconda -b
 RUN rm Miniconda-latest-Linux-x86_64.sh
 ENV PATH=/miniconda/bin:${PATH}
 RUN conda update -y conda
-RUN /bin/bash -c "conda create --name aimed python=3.6.5"
+RUN /bin/bash -c "conda create --name aimed python=3.7"
 RUN /bin/bash -c "source activate aimed && \
     conda env update --name aimed --file environment.yml && \
     source deactivate"
@@ -32,7 +32,7 @@ COPY ./radio_dep/config.yml /miniconda/envs/aimed/lib/python3.6/site-packages/ra
 WORKDIR /app
 
 COPY source /app/source 
-COPY weights /app/source 
+COPY weights /app/weights 
 
-#ENTRYPOINT ["-c", "while :; do echo 'Hit CTRL+C'; sleep 1; done"]
+ENTRYPOINT ["/bin/bash", "-c", "while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 

@@ -2,7 +2,7 @@
 
 
 class Config:
-    def __init__(self):
+    def __init__(self, s_path):
         self.pathToClassifier = '../weights/resnet_luna+dicom/last.pth.tar'
         self.pathToSegmentator = '../weights/unet_luna+dicom/last.pth.tar'
 
@@ -17,6 +17,6 @@ class Config:
         self.crop_size = (64, 64, 64)
         self.strides = (55, 55, 55)
 
-        self.save_path = './exp_1'
+        self.save_path = s_path
 
 

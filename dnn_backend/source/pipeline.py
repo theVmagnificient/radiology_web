@@ -72,7 +72,7 @@ class Pipe:
         for dcm in range(len(self.full_pipe)):
             print(dcm)
             batch_crops = self.full_pipe.next_batch(1, shuffle=False)
-            dump_slices(batch_crops, self.cf)
+            dump_slices(batch_crops, self.cf.save_path)
             a = batch_crops.nodules_to_df(batch_crops.nodules)
             a.to_csv(csv_path, mode='a', header=False, index=False)
 

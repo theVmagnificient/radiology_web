@@ -18,11 +18,11 @@ def get_nodules_pixel_coords(batch):
     return pixel_nodules_df
 
 
-def dump_slices(batch_crops, cf):
+def dump_slices(batch_crops, save_path):
     df = get_nodules_pixel_coords(batch_crops)
 
     try:
-        os.mkdir(os.path.join(cf.save_path, batch_crops.indices[0]))
+        os.mkdir(os.path.join(save_path, batch_crops.indices[0]))
     except Exception as e:
         print(str(e))
 
@@ -39,7 +39,7 @@ def dump_slices(batch_crops, cf):
                 new_img = cv2.rectangle(new_img, first_p, second_p, (255, 0, 0), 2)
 
         new_img /= 255.0
-        path = os.path.join(os.path.join(cf.save_path, batch_crops.indices[0]), str(slice_num) + '.png')
+        path = os.path.join(os.path.join(save_path, batch_crops.indices[0]), str(slice_num) + '.png')
         plt.imsave(path, new_img)
 
 
