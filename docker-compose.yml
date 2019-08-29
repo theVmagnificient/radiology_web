@@ -7,9 +7,14 @@ services:
     environment:
       KAFKA_BROKER_URL: broker:9092
       TRANSACTIONS_TOPIC: dnn.data
+      KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
+
     volumes:
       - aimed_archives:/mnt/archives
       - aimed_results:/mnt/results
+    ports:
+      - "12222:22"
+
 
 volumes:
   aimed_archives:

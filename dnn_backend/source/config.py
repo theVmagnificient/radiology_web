@@ -17,6 +17,8 @@ class Config:
         self.crop_size = (64, 64, 64)
         self.strides = (55, 55, 55)
 
-        self.save_path = s_path
+        self.root_path_to_save = s_path
+
+        self.save_path = None
 
 

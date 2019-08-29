@@ -34,5 +34,22 @@ WORKDIR /app
 COPY source /app/source 
 COPY weights /app/weights 
 
-ENTRYPOINT ["/bin/bash", "-c", "while :; do echo 'Hit CTRL+C'; sleep 1; done"]
+WORKDIR /
+RUN apt-get update && apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:sudan_military' | chpasswd
+
+ENV PATH /miniconda/bin:$PATH
+
+RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+
+RUN mkdir /root/.ssh
+EXPOSE 22
+
+RUN /bin/bash -c "source activate aimed && pip install confluent-kafka[avro] confluent-kafka && source deactivate"
+
+CMD ["/usr/sbin/sshd", "-D"]
+
+#ENTRYPOINT ["/bin/bash", "-c", "while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 

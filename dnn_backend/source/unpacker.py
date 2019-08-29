@@ -14,6 +14,10 @@ class Preprocess:
 
         try:
             shutil.rmtree(self.c_path)
+        except Exception as e:
+            print(str(e))
+
+        try:
             shutil.rmtree(self.e_path)
         except Exception as e:
             print(str(e))
@@ -27,7 +31,8 @@ class Preprocess:
 
     def _extract(self):
         try:
-            os.mkdir(self.e_path)
+            if os.path.isdir(self.e_path):
+                os.mkdir(self.e_path)
             patoolib.extract_archive(self.a_path, outdir=self.e_path)
         except Exception as e:
             print(f"Failed: {str(e)}")
@@ -72,14 +77,12 @@ class Preprocess:
         #for dir in pathsToDcm:
         #    self._copy_files(dir)
 
-
-
     def start(self):
         self._extract()
         self._convert2format()
         print(f"Converted {len(os.listdir(self.c_path))} studies")
         print(f"Removing extracted files...")
-#        shutil.rmtree(self.e_path)
+        shutil.rmtree(self.e_path)
 
 
 

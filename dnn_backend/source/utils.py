@@ -3,6 +3,8 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 import os
+import hashlib
+import time
 
 def get_nodules_pixel_coords(batch):
     """ get numpy array of nodules-locations and diameter in relative coords
@@ -84,6 +86,13 @@ def process_nodules(batch_crops):
     batch_crops.masks = None
     batch_crops.create_mask()
     print("Crops processed")
+
+
+def get_random_hash():
+    hash = hashlib.sha1()
+    hash.update(str(time.time()).encode('utf-8'))
+    hash.hexdigest()
+    return hash.hexdigest()[:10]
 
 
 

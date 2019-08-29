@@ -5,7 +5,8 @@ WORKDIR /usr/app
 RUN apt-get update && apt-get install -y librdkafka-dev
 
 ADD ./requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
+RUN pip3 install confluent-kafka[avro]
 ADD ./ ./
 
-CMD ["python", "app.py"]
+CMD ["python", "app_avro.py"]
