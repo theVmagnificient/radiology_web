@@ -1,0 +1,15 @@
+{
+  "namespace": "aimed",
+  "name": "result",
+  "type": "record",
+  "fields": [
+    {
+      "name": "code",
+      "type": "string"
+    },
+    {
+      "name": "path",
+      "type": "string"
+    }
+  ]
+}

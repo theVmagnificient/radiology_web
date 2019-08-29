@@ -41,10 +41,6 @@ class Executor:
         except Exception as e:
             print(str(e))
 
-
-
-
-
     def unpack(self, pathToArchive, pathToConverted, numWorkers=3):
         prep = Preprocess(pathToArchive, pathToConverted, numWorkers)
         prep.start()
@@ -54,10 +50,8 @@ class Executor:
         self.pipe.start_inference()
 
 
-
-
-
-conf = Config('/mnt/results/exp_1')
-e = Executor(cf=conf)
-e.unpack('/mnt/archives/out.zip', '/mnt/archives/tmp')
-e.start()
+if __name__ == '__main__':
+    conf = Config('/mnt/results/experiments')
+    e = Executor(cf=conf)
+    e.unpack('/mnt/archives/out.zip', '/mnt/archives/tmp')
+    e.start()
