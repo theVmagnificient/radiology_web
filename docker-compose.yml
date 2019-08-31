@@ -16,10 +16,6 @@ services:
       - "12222:22"
 
 
-volumes:
-  aimed_archives:
-  aimed_results:
-
 networks:
   default:
     external:
