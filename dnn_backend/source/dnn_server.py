@@ -53,11 +53,12 @@ class dnnServer(threading.Thread):
                     self.executor.start()
                     value = {
                              "code": "success",
-                             "path": self.executor.pipe.cf.save_path.split('/')[-1]
+                             "path": self.executor.pipe.cf.save_path.split('/')[-1],
+                             "id": msg["id"]
                              }
                 except Exception as e:
                     print(str(e))
-                    value = {"code": "failed", "path": "none"}
+                    value = {"code": "failed", "path": "none", "id": "-1"}
                 finally:
                     self.producer.produce_msg(value)
 
