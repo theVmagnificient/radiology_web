@@ -182,7 +182,7 @@
 <script>
     imageUrls = [
         {% for dicom_names in research.dicom_names_list %}
-            `${window.location.origin}/static/{{ research.dir_name }}/{{ dicom_names }}`,
+            `${window.location.origin}/static/research_storage/{{ research.dir_name }}/{{ dicom_names }}`,
         {% endfor %}
     ];
 

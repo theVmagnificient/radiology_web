@@ -24,8 +24,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ns7a0n4*a!l(a8nn+0a#25k#gu5vc-8lvbc$m2h1gi_!m41ev8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+
+if os.getenv("DJANGO_ENV") == "prod":
+	DEBUG = False
+	ALLOWED_HOSTS = ['*']
+else:
+	DEBUG = True
+	ALLOWED_HOSTS = ['*']
 
 # Telegram
 FeedbackTelegramChannelToken = "701215222:AAGjMuomEawq3fwJQHqfXmJkZCrKKURnCv0"
@@ -92,8 +97,11 @@ WSGI_APPLICATION = 'Frontend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+	'USER': 'postgres',
+	'HOST': 'db',
+	'PORT': 5432,
     }
 }
 
@@ -116,6 +124,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': None,
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -140,6 +165,8 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 1024*1024*50000
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+#    os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, "research_storage"),
 ]
+
+STATIC_ROOT = 'static/'

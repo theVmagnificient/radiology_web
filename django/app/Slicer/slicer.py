@@ -18,7 +18,7 @@ def zip_validation(research):
     return {"ok": True}
 
 def extract_zip(zip_path):
-    extract_dir = os.path.join(settings.BASE_DIR, "research_storage", "".join(zip_path.split("/")[-1].split(".")[:-1]))
+    extract_dir = os.path.join(settings.BASE_DIR, "static", "research_storage", "".join(zip_path.split("/")[-1].split(".")[:-1]))
 
     if not zipfile.is_zipfile(zip_path):
         return {"ok": False, "error": "Invalid zip file"}
@@ -63,7 +63,7 @@ def handle_research(research):
     if not valid["ok"]:
         return valid
 
-    zip_path = os.path.join(settings.BASE_DIR, "research_storage", "zips", research.name)
+    zip_path = os.path.join(settings.BASE_DIR, "static", "research_storage", "zips", research.name)
     zip_path = fs.save(zip_path, research)
 
     resp = extract_zip(zip_path)

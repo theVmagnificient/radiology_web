@@ -6,4 +6,5 @@
 *.xml
 *.log
 *.db
+django/app/static/*
 dnn_backend/radio
