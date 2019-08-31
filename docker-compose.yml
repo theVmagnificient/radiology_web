@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+  django:
+    build: 
+      context: ./django
+    ports:
+      - "8001:8001"
+      - "8000:8000"
+    volumes:
+      - ./django/app:/django
+      - ./django/app/static/research_storage/zips:/mnt/archives
+      - ./django/app/static/research_storage/results:/mnt/results
+    command: >
+      sh -c "uwsgi --ini radiology_uwsgi.ini"
 
   dnn_backend:
     build: ./dnn_backend

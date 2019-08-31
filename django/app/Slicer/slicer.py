@@ -2,6 +2,7 @@ from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from .models import Research
 import matplotlib.pyplot as plt
+from .kafka_client import KafkaProducer
 from matplotlib import cm
 import pydicom as dicom
 import zipfile
@@ -9,6 +10,9 @@ import json
 import os
 
 MAX_RESEARCH_SIZE = 1000 # in megabytes
+KAFKA_PRODUCER = KafkaProducer(os.environ.get('KAFKA_BROKER_URL'), os.environ.get('TRANSACTIONS_TOPIC'),
+        "dnn_aimed_group", 'http://schema_registry:8081')
+    
 
 def zip_validation(research):
     if research.name.split(".")[-1] != "zip":
@@ -18,7 +22,7 @@ def zip_validation(research):
     return {"ok": True}
 
 def extract_zip(zip_path):
-    extract_dir = os.path.join(settings.BASE_DIR, "static", "research_storage", "".join(zip_path.split("/")[-1].split(".")[:-1]))
+    extract_dir = os.path.join(settings.BASE_DIR, "static", "research_storage", "dicoms", "".join(zip_path.split("/")[-1].split(".")[:-1]))
 
     if not zipfile.is_zipfile(zip_path):
         return {"ok": False, "error": "Invalid zip file"}
@@ -55,6 +59,15 @@ def process(params):
                     zip_name=params["zip_name"], dicom_names=json.dumps(params["filenames"]))
     
     research.save()
+    return research
+
+def call_prediction(research_db):    
+    kafka_msg = {
+        "command": "start",
+        "id": research_db.id,
+        "path": research_db.zip_name, 
+    }
+    KAFKA_PRODUCER.produce_msg(kafka_msg)
 
 def handle_research(research):
     fs = FileSystemStorage()
@@ -71,7 +84,8 @@ def handle_research(research):
         return resp
     resp["zip_name"] = os.path.basename(zip_path)
 
-    process(resp)
+    research_db = process(resp)
+    call_prediction(research_db)
 
     return {"ok": True}
     
