@@ -9,8 +9,8 @@ services:
       - "8000:8000"
     volumes:
       - ./django/app:/django
-      - ./django/app/static/research_storage/zips:/mnt/archives
-      - ./django/app/static/research_storage/results:/mnt/results
+      - aimed_archives:/app/static/research_storage/zips
+      - aimed_results:/app/static/research_storage/results
     command: >
       sh -c "uwsgi --ini radiology_uwsgi.ini"
 
