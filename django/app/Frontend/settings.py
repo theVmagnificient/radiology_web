@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 import os
 import django
+#from Slicer.kafka_server import DjangoKafkaServer
 
 HOSTNAME = 'med.mos-ai.ru'
 SERVER_IP = '163.172.157.232'
@@ -172,7 +173,9 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
 #    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "research_storage"),
+    os.path.join(BASE_DIR, "/app/research_storage"),
 ]
 
 STATIC_ROOT = 'static/'
+#kafka_server = DjangoKafkaServer()
+#kafka_server.start()

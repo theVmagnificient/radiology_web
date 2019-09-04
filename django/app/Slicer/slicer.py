@@ -10,8 +10,8 @@ import json
 import os
 
 MAX_RESEARCH_SIZE = 1000 # in megabytes
-KAFKA_PRODUCER = KafkaProducer(os.environ.get('KAFKA_BROKER_URL'), os.environ.get('TRANSACTIONS_TOPIC'),
-        "dnn_aimed_group", 'http://schema_registry:8081')
+KAFKA_PRODUCER = KafkaProducer("/app/Slicer/avro_sch/res_prod.json", os.environ.get('KAFKA_BROKER_URL'), os.environ.get('PRODUCER_TOPIC'),
+        'http://schema_registry:8081')
     
 
 def zip_validation(research):
@@ -64,10 +64,11 @@ def process(params):
 def call_prediction(research_db):    
     kafka_msg = {
         "command": "start",
-        "id": research_db.id,
-        "path": research_db.zip_name, 
+        "id": str(research_db.id),
+        "path": research_db.zip_name 
     }
     KAFKA_PRODUCER.produce_msg(kafka_msg)
+    print("Message produced!")
 
 def handle_research(research):
     fs = FileSystemStorage()

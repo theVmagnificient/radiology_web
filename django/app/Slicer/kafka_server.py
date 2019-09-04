@@ -1,16 +1,14 @@
-from kafka_client import KafkaConsumer, KafkaProducer
+from Slicer.kafka_client import KafkaConsumer, KafkaProducer
 from confluent_kafka import TopicPartition
-from config import Config
 from .models import Research
 import threading
 import os
 import time
-from utils import get_random_hash
 
-os.environ['KAFKA_BROKER_URL'] = 'broker:9092'
-os.environ['TRANSACTIONS_TOPIC'] = 'dnn.results'
-os.environ['PRODUCER_TOPIC'] = 'dnn.data'
-os.environ['KAFKA_SCHEMA_REGISTRY_URL'] = 'http://schema_registry:8081'
+#os.environ['KAFKA_BROKER_URL'] = 'broker:9092'
+#os.environ['TRANSACTIONS_TOPIC'] = 'dnn.results'
+#os.environ['PRODUCER_TOPIC'] = 'dnn.data'
+#os.environ['KAFKA_SCHEMA_REGISTRY_URL'] = 'http://schema_registry:8081'
 
 class DjangoKafkaServer(threading.Thread):
     def __init__(self, broker_url=os.environ.get('KAFKA_BROKER_URL'),
@@ -24,7 +22,6 @@ class DjangoKafkaServer(threading.Thread):
         self.consumer = KafkaConsumer(broker_url, topic, group, schema_registry_url)
         self.producer = KafkaProducer('avro_sch/res_prod.json', broker_url, producer_topic, schema_registry_url)
 
-        conf = Config('/mnt/results/experiments')
         self.volume_path = '/mnt/archives'
 
     def run(self) -> None:

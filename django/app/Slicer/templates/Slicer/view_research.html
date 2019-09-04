@@ -58,7 +58,7 @@
         <div class = "row">
             <div class = "col s2"></div>
             <div class = "col c10">
-                <div id="slice_id"><b>Слайс:</b> 1. <a href = "/static/{{research.dir_name}}/{{ research.dicom_names_list | first }}" /> Скачать </a></div>
+                <div id="slice_id"><b>Слайс:</b> 1. <a href = "/static/dicoms/{{research.dir_name}}/{{ research.dicom_names_list | first }}" /> Скачать </a></div>
                 <p>
                     <label>
                     <input type="checkbox" id="toggleModalityLUT"/>
@@ -182,7 +182,7 @@
 <script>
     imageUrls = [
         {% for dicom_names in research.dicom_names_list %}
-            `${window.location.origin}/static/research_storage/{{ research.dir_name }}/{{ dicom_names }}`,
+            `${window.location.origin}/static/research_storage/dicoms/{{ research.dir_name }}/{{ dicom_names }}`,
         {% endfor %}
     ];
 

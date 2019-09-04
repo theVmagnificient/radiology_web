@@ -7,11 +7,11 @@ services:
     environment:
       KAFKA_BROKER_URL: broker:9092
 
-  consumer:
-    build: ./consumer
-    environment:
-       KAFKA_BROKER_URL: broker:9092
-       TRANSACTIONS_TOPIC: dnn.results
+      #  consumer:
+      #build: ./consumer
+      # environment:
+      # KAFKA_BROKER_URL: broker:9092
+      # TRANSACTIONS_TOPIC: dnn.results
 
 
 networks:

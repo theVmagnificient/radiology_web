@@ -26,27 +26,25 @@ class dnnServer(threading.Thread):
 
     def run(self) -> None:
         value = None
+        print("Starting main loop")
         while 1:
-            print("New msg polling")
             msg, kafka_msg = self.consumer.get_next_msg()
-            print("Msg caught", msg)
+            print("Msg caught: {}".format(msg))
 
             if msg['command'] == 'start':
                 try:
                     self.executor.pipe.cf.save_path = os.path.join(self.executor.pipe.cf.root_path_to_save,
                                                                     get_random_hash())
-
-                    print(self.executor.pipe.cf.save_path)
                     try:
                         print(f"Creating exp dir {self.executor.pipe.cf.save_path}")
-                        os.makedirs(self.executor.pipe.cf.save_path)
+                        os.mkdir(self.executor.pipe.cf.save_path)
                     except Exception as e:
                         print("You are very lucky | Creating new directory")
                         self.executor.pipe.cf.save_path = \
                             os.path.join(self.executor.pipe.cf.root_path_to_save,
                                                                        get_random_hash())
                         print(f"Creating exp dir {self.executor.pipe.cf.save_path}")
-                        os.makedirs(self.executor.pipe.cf.save_path)
+                        os.mkdir(self.executor.pipe.cf.save_path)
 
                     self.executor.unpack(os.path.join(self.volume_path, msg['path']),
                                          os.path.join(self.volume_path, msg['path'] + '_unpacked'))
@@ -64,7 +62,7 @@ class dnnServer(threading.Thread):
 
 
             self.consumer.c.commit(kafka_msg)
-#            exit(0)
+            exit(0)
 
 if __name__ == '__main__':
     server = dnnServer()

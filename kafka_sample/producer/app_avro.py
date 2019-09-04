@@ -13,12 +13,16 @@ value_schema_str = """
    "type": "record",
    "fields" : [
      {
-       "name" : "command",
+       "name" : "id",
        "type" : "string"
      },
      {
        "name" : "path",
        "type" : "string"
+     },
+     {
+       "name" : "code",
+       "type" : "string" 
      }
    ]
 }
@@ -26,7 +30,7 @@ value_schema_str = """
 
 value_schema = avro.loads(value_schema_str)
 print("Loaded")
-value = {"command": "start", "path": "out.zip"}
+value = {"code": "success", "path": "out.zip", "id": "1"}
 
 avroProducer = AvroProducer({
     'bootstrap.servers': KAFKA_BROKER_URL,
@@ -35,6 +39,6 @@ avroProducer = AvroProducer({
 
 while 1:
     time.sleep(5)
-    avroProducer.produce(topic='dnn.data', value=value)#, key=key)
+    avroProducer.produce(topic='dnn.results', value=value)#, key=key)
     print("msg produced")
 avroProducer.flush()

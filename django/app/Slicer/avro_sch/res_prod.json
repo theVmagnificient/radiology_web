@@ -1,0 +1,19 @@
+{
+  "namespace": "aimed",
+  "name": "request",
+  "type": "record",
+  "fields": [
+    {
+      "name": "command",
+      "type": "string"
+    },
+    {
+      "name": "path",
+      "type": "string"
+    },
+    {
+      "name": "id",
+      "type": "string"
+    }
+  ]
+}

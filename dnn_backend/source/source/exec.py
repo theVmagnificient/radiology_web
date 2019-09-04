@@ -15,12 +15,14 @@ import shutil
 class Executor:
 
     def __init__(self, cf):
+        print("Init started")
         unet = Modified3DUNet(1, 1)
         resnet = resnet34()
         device = torch.device('cpu')
 
         unet.load_state_dict(torch.load(cf.pathToSegmentator, map_location=device))
         resnet.load_state_dict(torch.load(cf.pathToClassifier, map_location=device))
+        print("Models loaded")
 
         self.segmentator = NewEstimator(unet, save_folder='./experiments/unet_full_pipe_eval/',
                                      cuda_device="cpu",
@@ -28,6 +30,7 @@ class Executor:
         self.classify = NewEstimator(resnet, save_folder='./experiments/res_full_pipe_eval/',
                                   cuda_device="cpu",
                                   optimizer=Adam, loss_fn=torch.nn.CrossEntropyLoss())
+        print("Estimators created")
 
         self.pipe = Pipe(cf, self.classify, self.segmentator)
 
@@ -41,6 +44,8 @@ class Executor:
             print("Directory created")
         except Exception as e:
             print(str(e))
+
+        print("Init complited")
 
     def unpack(self, pathToArchive, pathToConverted, numWorkers=3):
         prep = Preprocess(pathToArchive, pathToConverted, numWorkers)

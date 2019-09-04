@@ -27,3 +27,26 @@ def view_research(request, id):
     if res.count() != 1:
         return HttpResponse("404")
     return render(request, "Slicer/view_research.html", {"research": res[0], "extUser": ext_user, "user": user})
+
+def kafka_processed(request):
+    if request.method == "GET" and "data" in request.GET:
+        msg = json.loads(request.GET["data"])
+
+        if msg["code"] == "success":
+            path = msg["path"]
+            research_id = int(msg["id"])
+
+            research = Research.objects.filter(id=research_id)
+
+            if research.count() != 1:
+                print("Invalid research id recieved from kafka!")
+                return HttpResponse("Invalid research id recieved from kafka!")
+
+            research = research[0]
+            research.predictions_dir = path
+            research.save()
+        else:
+            print("An error occured during the prediction!!!")
+
+        return HttpResponse("OK")
+    return HttpResponse("Invalid request")
