@@ -58,7 +58,7 @@
         <div class = "row">
             <div class = "col s2"></div>
             <div class = "col c10">
-                <div id="slice_id"><b>Слайс:</b> 1. <a href = "/static/dicoms/{{research.dir_name}}/{{ research.dicom_names_list | first }}" /> Скачать </a></div>
+                <div id="slice_id"><b>Слайс:</b> 1. <a href = "/static/research_storage/dicoms/{{research.dir_name}}/{{ research.dicom_names_list | first }}" /> Скачать </a></div>
                 <p>
                     <label>
                     <input type="checkbox" id="toggleModalityLUT"/>
@@ -76,7 +76,12 @@
 </i></a>
                 <a class="btn-floating btn-small waves-effect waves-light" id = "next"><i class="material-icons">arrow_forward
 </i></a>
-            </div>
+		{% if research.predictions_dir|length %}
+			<p><a href = "/static/research_storage/results/zips/{{research.predictions_dir}}.zip"> Скачать размеченный архив </a></p>
+		{% else %}
+			<p><b>Исследование обрабатывается</b></p>
+		{% endif %}
+	    </div>
         </div>
     </div>
     <div class="col m6">

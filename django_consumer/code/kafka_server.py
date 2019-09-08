@@ -18,13 +18,15 @@ class DjangoKafkaServer(threading.Thread):
 
         self.daemon = True
 
-        self.consumer = KafkaConsumer(broker_url, topic, group, schema_registry_url)
+        self.consumer = KafkaConsumer("broker:9092", "dnn.results", group, schema_registry_url)
 
 
     def run(self) -> None:
         value = None
         while 1:
+            print("started polling")
             msg, kafka_msg = self.consumer.get_next_msg()
+            print(msg)
 
             json_msg = json.dumps(msg)
             http_params = {"data": json_msg}
@@ -35,7 +37,6 @@ class DjangoKafkaServer(threading.Thread):
             print("Server response: ", response)  
 
             self.consumer.c.commit(kafka_msg)
-            exit(0)
 
 if __name__ == '__main__':
     server = DjangoKafkaServer()

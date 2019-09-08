@@ -85,6 +85,7 @@ class CTImagesDicomBatch(CTImagesMaskedBatch):
         patient_data += np.int16(intercept_pat)
 
         self.series = int(dicom_slice.SeriesNumber)
+        print("Loading ended")
 
         return patient_data
 

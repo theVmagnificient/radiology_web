@@ -3,7 +3,14 @@ from .slicer import handle_research
 from .models import Research
 from Account.models import User, ExtendedUser
 from django.shortcuts import render
-import json
+import json, zipfile
+import os
+
+def zipfolder(path, ziph):
+    for root, dirs, files in os.walk(path):
+        for f in files:
+            print(os.path.join(root, f))
+            ziph.write(os.path.join(root, f))
 
 def research_list(request):
     researches = Research.objects.all()
@@ -41,6 +48,11 @@ def kafka_processed(request):
             if research.count() != 1:
                 print("Invalid research id recieved from kafka!")
                 return HttpResponse("Invalid research id recieved from kafka!")
+
+            dir_path = os.path.join("static/research_storage/results/experiments", path, "_")
+            zipf = zipfile.ZipFile(f"static/research_storage/results/zips/{path}.zip", "w", zipfile.ZIP_DEFLATED)
+            zipfolder(dir_path, zipf)
+            zipf.close()
 
             research = research[0]
             research.predictions_dir = path

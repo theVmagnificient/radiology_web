@@ -6,12 +6,13 @@ services:
     build: ./producer
     environment:
       KAFKA_BROKER_URL: broker:9092
+    command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 
-      #  consumer:
-      #build: ./consumer
-      # environment:
-      # KAFKA_BROKER_URL: broker:9092
-      # TRANSACTIONS_TOPIC: dnn.results
+  consumer:
+    build: ./consumer
+    environment:
+       KAFKA_BROKER_URL: broker:9092
+       TRANSACTIONS_TOPIC: dnn.results
 
 
 networks:

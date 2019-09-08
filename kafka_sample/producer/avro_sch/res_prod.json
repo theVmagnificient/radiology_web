@@ -4,7 +4,7 @@
   "type": "record",
   "fields": [
     {
-      "name": "code",
+      "name": "command",
       "type": "string"
     },
     {

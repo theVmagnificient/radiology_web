@@ -8,3 +8,5 @@
 *.db
 django/app/static/*
 dnn_backend/radio
+dnn_backend/source/experiments
+*.swp

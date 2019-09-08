@@ -40,7 +40,9 @@ class KafkaConsumer:
 
             if msg.error():
                 print("AvroConsumer error: {}".format(msg.error()))
-                continue
+                continue 
+
+            print(msg)
 
             return dict(msg.value()), msg
 

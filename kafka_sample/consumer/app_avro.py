@@ -8,14 +8,15 @@ KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 TRANSACTIONS_TOPIC = os.environ.get('TRANSACTIONS_TOPIC')
 
 c = AvroConsumer({
-    'bootstrap.servers': TRANSACTIONS_TOPIC,
+    'bootstrap.servers': "broker:9092",
     'group.id': 'groupid',
     'schema.registry.url': 'http://schema_registry:8081'})
 
-c.subscribe([TRANSACTIONS_TOPIC])
+c.subscribe(["dnn.results"])
 
 while True:
     try:
+        print("Start polling")
         msg = c.poll(10)
 
     except SerializerError as e:

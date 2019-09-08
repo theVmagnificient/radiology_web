@@ -9,6 +9,7 @@ services:
       - "8000:8000"
     volumes:
       - ./django/app:/app
+      - static_volume:/app/static/
       - aimed_archives:/app/static/research_storage/zips
       - aimed_results:/app/static/research_storage/results
     hostname: django
@@ -19,9 +20,21 @@ services:
       KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
     command: >
       sh -c "uwsgi --ini radiology_uwsgi.ini"
-  
+    depends_on:
+      - "db" 
   db:
     image: postgres
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - static_volume:/mnt/static_files/
+      - aimed_archives:/mnt/static_files/research_storage/zips
+      - aimed_results:/mnt/static_files/research_storage/results
+    depends_on:
+      - django
 
   django-consumer:
     build:
@@ -50,10 +63,11 @@ services:
     volumes:
       - aimed_archives:/mnt/archives
       - aimed_results:/mnt/results
+      - ./dnn_backend/source:/app/source
     ports:
       - "12222:22"
-    #    command: ["/bin/bash", "-c", "source activate aimed && cd /app/source/ && python dnn_server.py"]
-    command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
+    command: ["/bin/bash", "-c", "source activate aimed && cd /app/source/ && python3 dnn_server.py"]
+    # command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 
 networks:
   default:
@@ -63,4 +77,5 @@ networks:
 volumes:
   aimed_archives:
   aimed_results:
+  static_volume:
 

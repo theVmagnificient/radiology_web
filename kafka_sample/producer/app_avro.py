@@ -1,6 +1,6 @@
 from confluent_kafka import avro
 from confluent_kafka.avro import AvroProducer
-import os 
+import os
 import time
 
 KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
@@ -13,7 +13,7 @@ value_schema_str = """
    "type": "record",
    "fields" : [
      {
-       "name" : "id",
+       "name" : "command",
        "type" : "string"
      },
      {
@@ -21,16 +21,33 @@ value_schema_str = """
        "type" : "string"
      },
      {
-       "name" : "code",
-       "type" : "string" 
+       "name" : "id",
+       "type" : "string"
      }
    ]
 }
 """
 
-value_schema = avro.loads(value_schema_str)
+key_schema_str = """
+{
+   "namespace": "my.test",
+   "name": "key",
+   "type": "record",
+   "fields" : [
+     {
+       "name" : "name",
+       "type" : "string"
+     }
+   ]
+}
+"""
+
+
+value_schema = avro.load('avro_sch/res_prod.json')
+
+
 print("Loaded")
-value = {"code": "success", "path": "out.zip", "id": "1"}
+value = {"command": "start123123123", "path": "out.zip", "id": "1"}
 
 avroProducer = AvroProducer({
     'bootstrap.servers': KAFKA_BROKER_URL,
@@ -39,6 +56,6 @@ avroProducer = AvroProducer({
 
 while 1:
     time.sleep(5)
-    avroProducer.produce(topic='dnn.results', value=value)#, key=key)
+    avroProducer.produce(topic='dnn.data', value=value)#, key=key)
     print("msg produced")
 avroProducer.flush()

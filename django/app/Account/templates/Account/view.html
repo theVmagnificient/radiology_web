@@ -90,7 +90,7 @@
                                     <p class="truncate"><b>Слайсов: </b> {{ d.series.dicom_names_list | length }} </p>
                                     <br /><br />
                                     <a href="/series/view/{{d.series.id}}">Полный просмотр</a>
-                                    <a href="/static/zips/{{d.series.zip_name}}" style="margin-left:2%;">Скачать архив</a>
+				    <a href="/static/research_storage/zips/{{d.series.zip_name}}" style="margin-left:2%;">Скачать архив</a>
                                 </div>
                                 <div class="col s12 m6">
                                     <img src='/static/research_storage/dicoms/{{ d.series.dir_name }}/preview.png'
