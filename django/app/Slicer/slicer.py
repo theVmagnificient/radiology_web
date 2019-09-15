@@ -12,7 +12,7 @@ import os
 MAX_RESEARCH_SIZE = 1000 # in megabytes
 KAFKA_PRODUCER = KafkaProducer("/app/Slicer/avro_sch/res_prod.json", os.environ.get('KAFKA_BROKER_URL'), os.environ.get('PRODUCER_TOPIC'),
         'http://schema_registry:8081')
-    
+
 
 def zip_validation(research):
     if research.name.split(".")[-1] != "zip":
@@ -38,7 +38,7 @@ def extract_zip(zip_path):
         if dicoms == 0:
             return {"ok": False, "error": "No dicom files in root of archive"}
         zip_ref.extractall(extract_dir)
-        
+
     return {"ok": True, "extract_dir":  extract_dir, "filenames": filenames}
 
 def export_to_png(dcm, path):
@@ -53,19 +53,19 @@ def export_to_png(dcm, path):
 def process(params):
     dcm = dicom.dcmread(os.path.join(params["extract_dir"], os.listdir(params["extract_dir"])[0]))
     export_to_png(dcm, os.path.join(params["extract_dir"], "preview.png"))
-    research = Research.objects.create(study_date=dcm.StudyDate, study_time=dcm.StudyTime, 
+    research = Research.objects.create(study_date=dcm.StudyDate, study_time=dcm.StudyTime,
                     patient_id=dcm.PatientID, series_instance_uid=dcm.SeriesInstanceUID,
                     series_number=dcm.SeriesNumber, dir_name=os.path.basename(params["extract_dir"]),
                     zip_name=params["zip_name"], dicom_names=json.dumps(params["filenames"]))
-    
+
     research.save()
     return research
 
-def call_prediction(research_db):    
+def call_prediction(research_db):
     kafka_msg = {
         "command": "start",
         "id": str(research_db.id),
-        "path": research_db.zip_name 
+        "path": research_db.zip_name
     }
     KAFKA_PRODUCER.produce_msg(kafka_msg)
     print("Message produced!")
@@ -86,7 +86,7 @@ def handle_research(research):
     resp["zip_name"] = os.path.basename(zip_path)
 
     research_db = process(resp)
-    call_prediction(research_db)
+    # call_prediction(research_db)
 
     return {"ok": True}
-    
+
