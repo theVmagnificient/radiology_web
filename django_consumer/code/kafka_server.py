@@ -29,10 +29,9 @@ class DjangoKafkaServer(threading.Thread):
             print(msg)
 
             json_msg = json.dumps(msg)
-            http_params = {"data": json_msg}
-            print(http_params)
+            data = {"data": json_msg}
             #print("http://" + os.environ.get('SERVER_HOSTNAME') + ":" + os.environ.get("SERVER_PORT") + "/series/kafka_processed")
-            r = requests.get(url="http://" + os.environ.get('SERVER_HOSTNAME') + ":" + os.environ.get("SERVER_PORT") + "/series/kafka_processed", params=http_params)
+            r = requests.post(url="http://" + os.environ.get('SERVER_HOSTNAME') + ":" + os.environ.get("SERVER_PORT") + "/series/kafka_processed", data=data)
             response = r.text
             print("Server response: ", response)  
 

@@ -3,6 +3,7 @@ from .slicer import handle_research
 from .models import Research
 from Account.models import User, ExtendedUser
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 import json, zipfile
 import os
 
@@ -33,11 +34,25 @@ def view_research(request, id):
     res = Research.objects.filter(id=id)
     if res.count() != 1:
         return HttpResponse("404")
-    return render(request, "Slicer/view_research.html", {"research": res[0], "extUser": ext_user, "user": user})
+    
+    res = res[0]
+    nods = json.loads(res.predictions_nods)
+    return render(request, "Slicer/view_research.html", {
+                "research": res,
+                "extUser": ext_user,
+                "user": user,
+                "nods": nods,
+            }
+        )
 
+@csrf_exempt
 def kafka_processed(request):
-    if request.method == "GET" and "data" in request.GET:
-        msg = json.loads(request.GET["data"])
+    if request.method == "POST" and "data" in request.POST:
+        msg = json.loads(request.POST["data"])
+       
+        print("TEST")
+        print(msg)
+        print(msg["nods"])
 
         if msg["code"] == "success":
             path = msg["path"]
@@ -56,6 +71,7 @@ def kafka_processed(request):
 
             research = research[0]
             research.predictions_dir = path
+            research.predictions_nods = json.dumps(msg["nods"])
             research.save()
         else:
             print("An error occured during the prediction!!!")

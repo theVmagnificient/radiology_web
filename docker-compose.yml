@@ -53,21 +53,21 @@ services:
     command: >
       sh -c "python kafka_server.py"
 
-#   dnn_backend:
-#     build: ./dnn_backend
-#     environment:
-#       KAFKA_BROKER_URL: broker:9092
-#       TRANSACTIONS_TOPIC: dnn.data
-#       PRODUCER_TOPIC: dnn.results
-#       KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
-#     volumes:
-#       - aimed_archives:/mnt/archives
-#       - aimed_results:/mnt/results
-#       - ./dnn_backend/source:/app/source
-#     ports:
-#       - "12222:22"
-#     command: ["/bin/bash", "-c", "source activate aimed && cd /app/source/ && python3 dnn_server.py"]
-#     # command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
+  dnn_backend:
+    build: ./dnn_backend
+    environment:
+      KAFKA_BROKER_URL: broker:9092
+      TRANSACTIONS_TOPIC: dnn.data
+      PRODUCER_TOPIC: dnn.results
+      KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
+    volumes:
+      - aimed_archives:/mnt/archives
+      - aimed_results:/mnt/results
+      - ./dnn_backend/source:/app/source
+    ports:
+      - "12222:22"
+    command: ["/bin/bash", "-c", "source activate aimed && cd /app/source/ && python3 dnn_server.py"]
+    #command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 
 # networks:
 #   default:
@@ -76,6 +76,8 @@ services:
 
 volumes:
   aimed_archives:
+    external: true
   aimed_results:
+    external: true
   static_volume:
 

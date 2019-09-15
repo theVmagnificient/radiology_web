@@ -6,7 +6,7 @@ from dicom_batch import CTImagesDicomBatch
 from radio import dataset as ds
 import os
 import pandas as pd
-from utils import dump_slices, check_overlap, process_nodules
+from utils import dump_slices, check_overlap, process_nodules, get_nodules_dict
 
 
 class Pipe:
@@ -18,7 +18,7 @@ class Pipe:
             .init_variable('segm_mask')
             .init_variable('conf_mask')
             .load(fmt='dicom')
-            .unify_spacing(shape=cf.shape, spacing=cf.spacing,
+            .unify_spacing(shape=(500, 300, 300), spacing=(1.0, 1.0, 1.0),
                            method='pil-simd', padding='constant')
             #.call(crop_img)
             .normalize_hu()
@@ -27,8 +27,8 @@ class Pipe:
                     torch.nn.functional.softmax(
                         torch.from_numpy(
                             classifier.predict(x)))[..., 1],
-                    crop_shape=cf.crop_size,
-                    strides=cf.strides,
+                    crop_shape=[64, 64, 64],
+                    strides=[55, 55, 55],
                     batch_size=4,
                     data_format="channels_first",
                     model_type="callable",
@@ -39,8 +39,8 @@ class Pipe:
             .update_variable('conf_mask', B('masks'))
             .predict_on_scan(
                         model=segmentator.predict,
-                        crop_shape=cf.crop_size,
-                        strides=cf.strides,
+                        crop_shape=(64, 64, 64),
+                        strides=(55, 55, 55),
                         batch_size=4,
                         data_format="channels_first",
                         model_type="callable",
@@ -63,6 +63,7 @@ class Pipe:
 
     def start_inference(self):
         print("Started inference")
+        nodules_dicts = []
         nods = pd.DataFrame(
             columns=["nodule_id", "source_id", "locZ", "locY", "locX", "diamZ", "diamY", "diamX", "confidence",
                      "series"])
@@ -73,8 +74,10 @@ class Pipe:
             print(dcm)
             batch_crops = self.full_pipe.next_batch(1, shuffle=False)
             dump_slices(batch_crops, self.cf.save_path)
+            nodules_dicts.append(get_nodules_dict(batch_crops))
             a = batch_crops.nodules_to_df(batch_crops.nodules)
             a.to_csv(csv_path, mode='a', header=False, index=False)
+        return nodules_dicts
 
 
 
