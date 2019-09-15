@@ -1,6 +1,6 @@
 {
   "namespace": "aimed",
-  "name": "result",
+  "name": "request",
   "type": "record",
   "fields": [
     {
@@ -14,11 +14,6 @@
     {
       "name": "id",
       "type": "string"
-    },
-    {
-      "name": "nodules",
-      "type": "array",
-      "items": "int"
     }
   ]
 }

@@ -18,7 +18,7 @@ class dnnServer(threading.Thread):
         self.daemon = True
 
         self.consumer = KafkaConsumer(broker_url, topic, group, schema_registry_url)
-        self.producer = KafkaProducer('avro_sch/res_prod.json', broker_url, producer_topic, schema_registry_url)
+        self.producer = KafkaProducer('avro_sch/res_prod_v1.json', broker_url, producer_topic, schema_registry_url)
 
         conf = Config('/mnt/results/experiments')
         self.executor = Executor(cf=conf)
@@ -32,6 +32,7 @@ class dnnServer(threading.Thread):
             print("Msg caught", msg)
 
             if msg['command'] == 'start':
+                start_time = time.time()
                 try:
                     self.executor.pipe.cf.save_path = os.path.join(self.executor.pipe.cf.root_path_to_save,
                                                                     get_random_hash())
@@ -50,21 +51,23 @@ class dnnServer(threading.Thread):
 
                     self.executor.unpack(os.path.join(self.volume_path, msg['path']),
                                          os.path.join(self.volume_path, msg['path'] + '_unpacked'))
-                    self.executor.start()
+                    nods = self.executor.start()
+                
                     value = {
                              "code": "success",
                              "path": self.executor.pipe.cf.save_path.split('/')[-1],
-                             "id": msg["id"]
+                             "id": msg["id"],
+                             "nods": nods[0]
                              }
+                    print("Inference time: {}".format(time.time() - start_time))
                 except Exception as e:
                     print(str(e))
-                    value = {"code": "failed", "path": "none", "id": "-1"}
+                    value = {"code": "failed", "path": "none", "id": "-1", "nods": []}
                 finally:
                     self.producer.produce_msg(value)
             else:
-                value = {"code": "failed", "path": "none", "id": "-1"}
+                value = {"code": "failed", "path": "none", "id": "-1", "nods": []}
                 self.producer.produce_msg(value)
-
 
             self.consumer.c.commit(kafka_msg)
 #            exit(0)

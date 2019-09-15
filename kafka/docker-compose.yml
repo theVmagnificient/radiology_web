@@ -43,6 +43,15 @@ services:
       SCHEMA_LOG4J_ROOT_LOGLEVEL: 'ERROR'
       SCHEMA_TOOLS_LOG4J_LOGLEVEL: 'ERROR'
 
+  schema_registry_ui:
+    image: landoop/schema-registry-ui 
+    depends_on:
+      - schema_registry 
+    ports:
+      - "10001:8000"
+    environment:
+      SCHEMAREGISTRY_URL: 'http://schema_registry:8081'
+
   control-center:
     image: confluentinc/cp-enterprise-control-center
     hostname: control-center
