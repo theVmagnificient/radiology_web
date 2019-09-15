@@ -185,10 +185,23 @@
 <script src="{% static 'Slicer/js/initializeWebWorkers.js' %}"></script>
 
 <script>
-    imageUrls = [
+    let imageUrls = [
         {% for dicom_names in research.dicom_names_list %}
             `${window.location.origin}/static/research_storage/dicoms/{{ research.dir_name }}/{{ dicom_names }}`,
         {% endfor %}
+    ];
+
+    let Nods = [
+	{% for node in nods %}
+		{ 
+			"uid": "{{ node.uid }}", 
+			"sliceNum":  {{ node.sliceNum }},
+			"coordX1":  {{ node.coordX1 }},
+			"coordY1":  {{ node.coordY1 }},
+			"coordX2":  {{ node.coordX2 }},
+			"coordY2":  {{ node.coordY2 }},
+		},
+	{% endfor %}
     ];
 
     let urlInput = document.getElementById("wadoURL");
@@ -249,7 +262,11 @@
                     cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
                     cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
                     cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
-                    loaded = true;
+                    
+		    const RectangleRoiTool = cornerstoneTools.RectangleRoiTool; 
+		    cornerstoneTools.addTool(RectangleRoiTool);
+		    cornerstoneTools.setToolActive('RectangleRoi', {mouseButtonMask: 1});
+		    loaded = true;
                 }
 
                 function getTransferSyntax() {

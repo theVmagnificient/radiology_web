@@ -16,6 +16,7 @@ class Research(models.Model):
     zip_name = models.CharField(max_length=256)
     preview_image = models.CharField(max_length=128)
     predictions_dir = models.CharField(max_length=128)
+    predictions_nods = models.TextField()
 
     @property
     def dicom_names_list(self):

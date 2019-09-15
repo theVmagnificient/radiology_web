@@ -2,10 +2,14 @@ version: '3'
 
 
 services:
-  producer:
-    build: ./producer
+  tests:
+    build: .
     environment:
       KAFKA_BROKER_URL: broker:9092
+
+    volumes:
+      - aimed_archives:/mnt/archives
+      - aimed_results:/mnt/results
     command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 
     #consumer:
@@ -18,4 +22,10 @@ services:
 networks:
   default:
     external:
-      name: kafka-network
+      name: kafka-network 
+
+volumes:
+  aimed_archives:
+    external: true
+  aimed_results:
+    external: true

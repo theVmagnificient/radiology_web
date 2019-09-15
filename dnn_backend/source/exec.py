@@ -23,10 +23,10 @@ class Executor:
         resnet.load_state_dict(torch.load(cf.pathToClassifier, map_location=device))
 
         self.segmentator = NewEstimator(unet, save_folder='./experiments/unet_full_pipe_eval/',
-                                     cuda_device=0,
+                                     cuda_device="cpu",
                                      optimizer=Adam, loss_fn=dice_loss)
         self.classify = NewEstimator(resnet, save_folder='./experiments/res_full_pipe_eval/',
-                                  cuda_device=0,
+                                  cuda_device="cpu",
                                   optimizer=Adam, loss_fn=torch.nn.CrossEntropyLoss())
 
         self.pipe = Pipe(cf, self.classify, self.segmentator)
@@ -48,7 +48,7 @@ class Executor:
         self.pipe.add_dataset(pathToConverted)
 
     def start(self):
-        self.pipe.start_inference()
+        return self.pipe.start_inference()
 
 
 if __name__ == '__main__':

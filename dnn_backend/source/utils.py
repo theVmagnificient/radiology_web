@@ -44,6 +44,31 @@ def dump_slices(batch_crops, save_path):
         path = os.path.join(os.path.join(save_path, batch_crops.indices[0]), str(slice_num) + '.png')
         plt.imsave(path, new_img)
 
+def get_nodules_dict(batch):
+    df = get_nodules_pixel_coords(batch)
+    
+    nods = []
+    df.apply(lambda row: nods.append([row['coordZ'], row['coordX'] - row['diameter_pixels'] // 2, 
+                                      row['coordY'] - row['diameter_pixels'] // 2, 
+                                      row['coordX'] + row['diameter_pixels'] // 2, 
+                                      row['coordY'] + row['diameter_pixels'] // 2]), axis=1)
+    
+    
+    return [{'uid': batch.indices[0], 'sliceNum': i[0], 'coordX1': i[1], 'coordY1': i[2], 'coordX2': i[3], 'coordY2': i[4]} for i in nods]
+    
+
+def get_nods_array(batch):
+    df = get_nodules_pixel_coords(batch)
+    
+    nods = []
+    df.apply(lambda row: nods.append([row['coordZ'], 
+                                      row['coordX'] - row['diameter_pixels'] // 2, 
+                                      row['coordY'] - row['diameter_pixels'] // 2, 
+                                      row['coordX'] + row['diameter_pixels'] // 2, 
+                                      row['coordY'] + row['diameter_pixels'] // 2]), axis=1)
+    return nods
+    
+
 
 def check_overlap(batch_crops):
     l = []
