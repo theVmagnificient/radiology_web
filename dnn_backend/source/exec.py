@@ -4,7 +4,7 @@ from mod_unet import *
 from torch.optim import Adam
 from models.pytorch.losses import dice_loss
 #from models.pytorch.estimator import Estimator
-from new_estimator import NewEstimator
+from new_estimator import NewEstimator as Estimator
 from config import Config
 
 from unpacker import Preprocess
@@ -17,16 +17,20 @@ class Executor:
     def __init__(self, cf):
         unet = Modified3DUNet(1, 1)
         resnet = resnet34()
-        device = torch.device('cpu')
+#        device = torch.device('cpu')
 
-        unet.load_state_dict(torch.load(cf.pathToSegmentator, map_location=device))
-        resnet.load_state_dict(torch.load(cf.pathToClassifier, map_location=device))
+        unet.load_state_dict(torch.load(cf.pathToSegmentator))
+        resnet.load_state_dict(torch.load(cf.pathToClassifier))
 
-        self.segmentator = NewEstimator(unet, save_folder='./experiments/unet_full_pipe_eval/',
-                                     cuda_device="cpu",
+        unet.eval()
+        resnet.eval()
+
+
+        self.segmentator = Estimator(unet, save_folder='./experiments/unet_full_pipe_eval/',
+                                     cuda_device=0,
                                      optimizer=Adam, loss_fn=dice_loss)
-        self.classify = NewEstimator(resnet, save_folder='./experiments/res_full_pipe_eval/',
-                                  cuda_device="cpu",
+        self.classify = Estimator(resnet, save_folder='./experiments/res_full_pipe_eval/',
+                                  cuda_device=1,
                                   optimizer=Adam, loss_fn=torch.nn.CrossEntropyLoss())
 
         self.pipe = Pipe(cf, self.classify, self.segmentator)

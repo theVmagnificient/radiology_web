@@ -9,6 +9,12 @@ import pandas as pd
 from utils import dump_slices, check_overlap, process_nodules, get_nodules_dict
 
 
+
+def check_metrics(batch):
+    print("Spacing: {}".format(batch.spacing))
+    print("Shape: {}".format(batch.get(0, 'images').shape))
+    print("Max: {}".format(batch.get(0, 'images').max()))
+    print("Min: {}".format(batch.get(0, 'images').min()))
 class Pipe:
 
     def __init__(self, cf, classifier, segmentator):
@@ -22,6 +28,7 @@ class Pipe:
                            method='pil-simd', padding='constant')
             #.call(crop_img)
             .normalize_hu()
+            .call(check_metrics)
             .predict_on_scan(
                 model=lambda x:
                     torch.nn.functional.softmax(

@@ -85,8 +85,9 @@ class CTImagesDicomBatch(CTImagesMaskedBatch):
         patient_data += np.int16(intercept_pat)
 
         self.series = int(dicom_slice.SeriesNumber)
+    
         print("Loading ended")
-
+        print(self.spacing)
         return patient_data
 
     def _load_blosc_component_sync(self, ix, component, ext):

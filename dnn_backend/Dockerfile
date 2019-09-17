@@ -49,6 +49,7 @@ EXPOSE 22
 
 RUN /bin/bash -c "source activate aimed && pip install confluent-kafka[avro] confluent-kafka && source deactivate"
 
+
 CMD ["/usr/sbin/sshd", "-D"]
 
 #ENTRYPOINT ["/bin/bash", "-c", "while :; do echo 'Hit CTRL+C'; sleep 1; done"]

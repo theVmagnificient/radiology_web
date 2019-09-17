@@ -19,6 +19,19 @@ def get_nodules_pixel_coords(batch):
                                                                     'coordX', 'diameter_pixels')]
     return pixel_nodules_df
 
+def get_nodules_pixel_coords_orig(batch):
+    """ get numpy array of nodules-locations and diameter in relative coords
+    """
+    nodules_dict = dict()
+    nodules_dict.update(numeric_ix=batch.nodules.patient_pos)
+    pixel_zyx = np.rint(abs((batch.nodules.nodule_center - batch.origin_beg)) / batch.spacing_beg).astype(np.int)
+    nodules_dict.update({'coord' + letter: pixel_zyx[:, i] for i, letter in enumerate(['Z', 'Y', 'X'])})
+    nodules_dict.update({'diameter_pixels': (np.rint(batch.nodules.nodule_size / batch.spacing_beg).max()
+                                             .astype(np.int))})
+    pixel_nodules_df = pd.DataFrame.from_dict(nodules_dict).loc[:, ('numeric_ix', 'coordZ', 'coordY',
+                                                                    'coordX', 'diameter_pixels')]
+    return pixel_nodules_df
+
 
 def dump_slices(batch_crops, save_path):
     df = get_nodules_pixel_coords(batch_crops)
@@ -45,7 +58,7 @@ def dump_slices(batch_crops, save_path):
         plt.imsave(path, new_img)
 
 def get_nodules_dict(batch):
-    df = get_nodules_pixel_coords(batch)
+    df = get_nodules_pixel_coords_orig(batch)
     
     nods = []
     df.apply(lambda row: nods.append([row['coordZ'], row['coordX'] - row['diameter_pixels'] // 2, 

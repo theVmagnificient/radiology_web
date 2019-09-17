@@ -68,6 +68,8 @@ def test_dnn():
             if os.path.isdir(os.path.join("/mnt/results/experiments", msg["path"], res)):
                 png_files = glob.glob(os.path.join("/mnt/results/experiments", msg["path"], res, "*.png"))
                 assert len(png_files) > 0, "No png output files found for {}".format(res)
+
+        assert len(msg["nods"]) < 5, "Too many nodules found"
         break
 
 
