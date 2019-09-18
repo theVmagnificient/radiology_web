@@ -90,6 +90,12 @@
   </div>
 </section>
 
+{% if research.predictions_dir|length %}
+	<p><a href = "/static/research_storage/results/zips/{{research.predictions_dir}}.zip"> Скачать архив </a></p>
+{% else %}
+	<p><b> Исследование обрабатывается </b></p>
+{% endif %}
+
 
 <div class = "row">
   <div class = "col m2"></div>
@@ -142,6 +148,20 @@
             "{{ dicom_name }}",
         {% endfor %}
     ];
+
+
+    let Nods = [
+	{% for node in nods %}
+		{ 
+			"uid": "{{ node.uid }}", 
+			"sliceNum":  {{ node.sliceNum }},
+			"coordX1":  {{ node.coordX1 }},
+			"coordY1":  {{ node.coordY1 }},
+			"coordX2":  {{ node.coordX2 }},
+			"coordY2":  {{ node.coordY2 }},
+		},
+	{% endfor %}
+    ];
 </script>
 
 <script>
@@ -176,7 +196,16 @@
 
   // setup handlers before we display the image
     function onImageRendered(e) {
-        console.log(stack.currentImageIdIndex);
+        let sliceID = stack.currentImageIdIndex;
+
+	let node = null;
+	for (let i = 0; i < Nods.length; i++) {
+		if (Math.abs(Nods[i]["sliceNum"] - sliceID) < 6) {
+			node = Nods[i];
+		}
+	}
+	if (node == null) return;
+
         const eventData = e.detail;
         // set the canvas context to the image coordinate system
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, eventData.canvasContext);
@@ -187,11 +216,15 @@
         context.beginPath();
         context.strokeStyle = 'red';
         context.lineWidth = .8;
-        context.rect(128, 90, 50, 60);
+        if (node.coordX2 > node.coordX1) {
+                [node.coordX1, node.coordX2] = [node.coordX2, node.coordX1];
+        }
+        if (node.coordY2 > node.coordY1) {
+                [node.coordY1, node.coordY2] = [node.coordY2, node.coordY1];
+        }
+        context.rect(node.coordX1, node.coordY1, node.coordX2 - node.coordX1, node.coordY2 - node.coordY1);
+
         context.stroke();
-        context.fillStyle = "white";
-        context.font = "12px Arial";
-        context.fillText("Tumor Here", 128, 85);
         context.beginPath();
         // context.arc(128, 128, 20, 0, 2 * Math.PI, false);
         // context.fillStyle = 'green';

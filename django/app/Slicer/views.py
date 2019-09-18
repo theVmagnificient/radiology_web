@@ -36,7 +36,9 @@ def view_research(request, id):
         return HttpResponse("404")
     
     res = res[0]
-    nods = json.loads(res.predictions_nods)
+    nods = []
+    if res.predictions_nods != "":
+        nods = json.loads(res.predictions_nods)
     return render(request, "Slicer/view_research.html", {
                 "research": res,
                 "extUser": ext_user,
