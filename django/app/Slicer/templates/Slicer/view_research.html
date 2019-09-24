@@ -32,10 +32,13 @@
   <link rel="stylesheet" href="{% static 'Slicer/cornerstone/bulma.min.css' %}">
   <link rel="stylesheet" href="{% static 'Slicer/cornerstone/styles.css' %}">
 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css" />
+
   <!-- include the hammer.js library for touch gestures-->
   <script src="{% static 'Slicer/cornerstone/hammer.js' %}"></script>
   <script src="{% static 'Slicer/cornerstone/dicomParser.min.js' %}"></script>
-
+  <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <!-- include the cornerstone library -->
   <script src="{% static 'Slicer/cornerstone/cornerstone-core' %}"></script>
   <script src="{% static 'Slicer/cornerstone/cornerstone-math' %}"></script>
@@ -86,14 +89,14 @@
     <div class="cornerstone-element-wrapper">
       <div id="cornerstone-element" class="cornerstone-element" data-index="0" oncontextmenu="return false" tabindex="0" style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><canvas class="cornerstone-canvas" width="1148" height="316" style="display: block; width: 1148px; height: 316px;"></canvas></div>
     </div>
-
+    <div id = "slider"></div>
   </div>
 </section>
 
 {% if research.predictions_dir|length %}
-	<p><a href = "/static/research_storage/results/zips/{{research.predictions_dir}}.zip"> Скачать архив </a></p>
+	<center><p><a href = "/static/research_storage/results/zips/{{research.predictions_dir}}.zip"> Скачать архив </a></p></center>
 {% else %}
-	<p><b> Исследование обрабатывается </b></p>
+	<center><p><b> Исследование обрабатывается </b></p></center>
 {% endif %}
 
 
@@ -137,6 +140,7 @@
   <div class = "col m2"></div>
 </div>
 
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var elems = document.querySelectorAll('.collapsible');
@@ -197,6 +201,10 @@
   // setup handlers before we display the image
     function onImageRendered(e) {
         let sliceID = stack.currentImageIdIndex;
+	
+	slider.noUiSlider.updateOptions({
+		start: sliceID + 1,
+	});
 
 	let node = null;
 	for (let i = 0; i < Nods.length; i++) {
@@ -258,11 +266,49 @@
   }
 
   cornerstoneTools.setToolActive(toolNames[0], { mouseButtonMask: 1 });
+  
+  function _setSlice(new_slice) {
+    stack.currentImageIdIndex = new_slice;
+    cornerstone.loadImage(imageIds[new_slice]).then(function(image) {
+      cornerstone.displayImage(element, image);
+    });
+  }
+
+  
+  let slices_slider = document.getElementById('slider');
+
+  let range_slider = {
+  	'min': [     1 ],
+        //'10%': [   500,  500 ],
+        //'50%': [  4000, 1000 ],
+        'max': [ imageIds.length ],
+  };
+
+  let slider_nods = [];
+  for (let i = 0; i < Nods.length; i++) {
+	slider_nods.push(Nods[i]["sliceNum"] + 1);
+  }
+
+  noUiSlider.create(slices_slider, {
+      range: range_slider,
+      start: 1,
+      step: 1,
+      pips: {
+          mode: 'values',
+          values: slider_nods,
+          density: 4,
+          stepped: true
+      }
+  });
+
+  slider.noUiSlider.on('change', (values, handle, unencoded, tap, positions) => {
+	 _setSlice(parseInt(values[0]) - 1);
+  });
 
   /***************************************************************************
    * UI & Boilerplate setup code
    **************************************************************************/
-
+  
   /***
    *
    *
