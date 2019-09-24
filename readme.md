@@ -1,4 +1,4 @@
-##Radiology web service for lung nodules detection.
+Radiology web service for lung nodules detection.
 
 Deployment algorithm:
 
