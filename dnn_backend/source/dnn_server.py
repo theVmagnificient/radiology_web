@@ -31,7 +31,7 @@ class dnnServer(threading.Thread):
             msg, kafka_msg = self.consumer.get_next_msg()
             print("Msg caught", msg)
 
-            if msg['command'] == 'start':
+            if msg['command'] == 'start' and os.path.exists(os.path.join(self.volume_path, msg['path'])):
                 start_time = time.time()
                 try:
                     self.executor.pipe.cf.save_path = os.path.join(self.executor.pipe.cf.root_path_to_save,
@@ -65,6 +65,7 @@ class dnnServer(threading.Thread):
                     value = {"code": "failed", "path": "none", "id": "-1", "nods": []}
                 finally:
                     self.producer.produce_msg(value)
+                    print("msg produced")
             else:
                 value = {"code": "failed", "path": "none", "id": "-1", "nods": []}
                 self.producer.produce_msg(value)

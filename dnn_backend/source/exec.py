@@ -18,6 +18,14 @@ class Executor:
         unet = Modified3DUNet(1, 1)
         resnet = resnet34()
 #        device = torch.device('cpu')
+        device = os.environ['CUDA_VISIBLE_DEVICES']
+
+        try:
+            device = int(device)
+            device = 0
+        except ValueError:
+            print("Using cpu")
+            device = "cpu"
 
         unet.load_state_dict(torch.load(cf.pathToSegmentator))
         resnet.load_state_dict(torch.load(cf.pathToClassifier))
@@ -27,10 +35,10 @@ class Executor:
 
 
         self.segmentator = Estimator(unet, save_folder='./experiments/unet_full_pipe_eval/',
-                                     cuda_device=0,
+                                     cuda_device=device,
                                      optimizer=Adam, loss_fn=dice_loss)
         self.classify = Estimator(resnet, save_folder='./experiments/res_full_pipe_eval/',
-                                  cuda_device=1,
+                                  cuda_device=device,
                                   optimizer=Adam, loss_fn=torch.nn.CrossEntropyLoss())
 
         self.pipe = Pipe(cf, self.classify, self.segmentator)

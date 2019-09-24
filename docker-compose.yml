@@ -60,6 +60,7 @@ services:
       TRANSACTIONS_TOPIC: dnn.data
       PRODUCER_TOPIC: dnn.results
       KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
+      CUDA_VISIBLE_DEVICES: 7
     volumes:
       - aimed_archives:/mnt/archives
       - aimed_results:/mnt/results

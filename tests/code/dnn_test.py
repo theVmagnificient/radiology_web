@@ -21,7 +21,7 @@ def teardown_module(module):
     #teardown_something()
     pass
 
-def test_dnn():
+def test_dnn_success():
     copyfile('research.zip', '/mnt/archives/research.zip') 
     value_schema = avro.load('avro_sch/res_prod.json')
     value = {"command": "start", "path": "research.zip", "id": "1"}
@@ -71,6 +71,45 @@ def test_dnn():
 
         assert len(msg["nods"]) < 5, "Too many nodules found"
         break
+    c.close()
 
 
+def test_dnn_broken_msg():
+    value_schema = avro.load('avro_sch/res_prod.json')
+    value = {"command": "start", "path": "research8913enadkjnasdnksajdn", "id": "1"}
 
+    avroProducer = AvroProducer({
+           'bootstrap.servers': KAFKA_BROKER_URL,
+           'schema.registry.url': 'http://schema_registry:8081'
+          }, default_value_schema=value_schema)
+
+    avroProducer.produce(topic='dnn.data', value=value)
+    print("msg produced")
+
+    c = AvroConsumer({
+    'bootstrap.servers': "broker:9092",
+    'group.id': 'groupid',
+    'schema.registry.url': 'http://schema_registry:8081'})
+
+    c.subscribe(["dnn.results"])
+
+    while True:
+        try:
+            print("Start polling")
+            msg = c.poll(10)
+
+        except SerializerError as e:
+            print("Message deserialization failed for {}: {}".format(msg, e))
+            break
+
+        if msg is None:
+            continue
+
+        if msg.error():
+            print("AvroConsumer error: {}".format(msg.error()))
+            continue
+        msg = msg.value()
+        
+        assert msg["code"] == "failed", "Inference failed"
+        break
+    c.close()
