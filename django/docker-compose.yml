@@ -1,0 +1,19 @@
+version: "3.0"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8001:8001"
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: > 
+      sh -c "uwsgi --ini radiology_uwsgi.ini"
+    depends_on:
+      - db
+  db:
+    image: postgres
+    
+

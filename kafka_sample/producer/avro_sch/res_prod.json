@@ -1,0 +1,24 @@
+{
+  "namespace": "aimed",
+  "name": "result",
+  "type": "record",
+  "fields": [
+    {
+      "name": "command",
+      "type": "string"
+    },
+    {
+      "name": "path",
+      "type": "string"
+    },
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "nodules",
+      "type": "array",
+      "items": "int"
+    }
+  ]
+}
