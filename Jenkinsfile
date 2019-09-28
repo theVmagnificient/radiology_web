@@ -7,7 +7,10 @@ node("ml3") {
       checkout scm 
     }
     stage("test") {
-      sh("cd tests && docker-compose up")
+      sh("cd tests && docker-compose up > tests")
+    }
+    stage("archive") {
+      archiveArtifacts("tests")
     }
   }
   catch(String error) {
@@ -15,6 +18,7 @@ node("ml3") {
     currentBuild.result = "FAILURE"
   }
   stage("clear") {
-    cleanWs() 
+    cleanWs()
+    sh("docker-compose rm tests")
   }
 }
