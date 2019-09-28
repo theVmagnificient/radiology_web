@@ -10,8 +10,8 @@ services:
     volumes:
       - aimed_archives:/mnt/archives
       - aimed_results:/mnt/results
-    command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
-
+        # command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
+    command: ["/bin/bash/", "-c", "cd /app/code && py.test -v dnn_backend.py"]
     #consumer:
     #build: ./producer
     #environment:
