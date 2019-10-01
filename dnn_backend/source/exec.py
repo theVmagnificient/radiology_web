@@ -23,12 +23,13 @@ class Executor:
         try:
             device = int(device)
             device = 0
+            unet.load_state_dict(torch.load(cf.pathToSegmentator))
+            resnet.load_state_dict(torch.load(cf.pathToClassifier))
         except ValueError:
             print("Using cpu")
-            device = "cpu"
-
-        unet.load_state_dict(torch.load(cf.pathToSegmentator))
-        resnet.load_state_dict(torch.load(cf.pathToClassifier))
+            device = "cpu" 
+            unet.load_state_dict(torch.load(cf.pathToSegmentator, map_location="cpu"))
+            resnet.load_state_dict(torch.load(cf.pathToClassifier, map_location="cpu"))
 
         unet.eval()
         resnet.eval()
