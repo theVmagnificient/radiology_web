@@ -9,10 +9,11 @@ node("ml3") {
       }
       stage("kafka start") {
         sh("cd kafka && chmod +x setup.sh")
+        sh("ls")
         sh("./setup.sh")
         sh("docker-compose up --detach")
         sh("sleep 5")
-        sh("ehco Kafka cluster started")
+        sh("echo Kafka cluster started")
       }
       /* spin up main part here */
       stage("start") {
