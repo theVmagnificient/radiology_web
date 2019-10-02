@@ -8,7 +8,7 @@ node("ml3") {
         checkout scm 
       }
       stage("kafka start") {
-          sh("ls ${WORKSPACE}\"kafka/\"")
+          sh("ls ${WORKSPACE}\"/kafka/\"")
           sh("chmod +x ${WORKSPACE}\"/kafka/setup.sh\"")
           sh("${WORKSPACE}\"/kafka/setup.sh\"")
           sh("cd kafka && docker-compose up --detach")
