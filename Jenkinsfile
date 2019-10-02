@@ -3,7 +3,7 @@ node("ml3") {
     try {
       stage("docker check") {
         sh("echo makbomb DevOps lessons")
-        sh(docker version)
+        sh("docker version")
       }
       stage("checkout") {
         checkout scm 
