@@ -1,4 +1,4 @@
-node {
+node("ml2") {
     try {
       stage("docker check") {
         sh("echo makbomb DevOps lessons")
