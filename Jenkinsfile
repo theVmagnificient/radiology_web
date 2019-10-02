@@ -8,12 +8,15 @@ node("ml3") {
         checkout scm 
       }
       stage("kafka start") {
-        sh("cd kafka && chmod +x setup.sh")
-        sh("ls")
-        sh("./setup.sh")
-        sh("docker-compose up --detach")
-        sh("sleep 5")
-        sh("echo Kafka cluster started")
+        dir("kafka") {
+          sh("pwd")
+          sh("chmod +x setup.sh")
+          sh("ls")
+          sh("./setup.sh")
+          sh("docker-compose up --detach")
+          sh("sleep 5")
+          sh("echo Kafka cluster started")
+        }
       }
       /* spin up main part here */
       stage("start") {
