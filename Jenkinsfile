@@ -5,10 +5,10 @@ node("ml3") {
         sh("echo makbomb DevOps lessons")
       }
       stage("checkout") {
-        checkout scm
-        sleep(300, SECONDS)
+        checkout scm 
       }
       stage("kafka start") {
+          sh("sleep 300")
           sh("ls ${WORKSPACE}\"/kafka/\"")
           sh("chmod +x ${WORKSPACE}\"/kafka/setup.sh\"")
           sh("${WORKSPACE}\"/kafka/setup.sh\"")
