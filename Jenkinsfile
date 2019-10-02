@@ -1,5 +1,5 @@
 node("ml3") {
-  docker.image('docker:latest').inside('-v /var/run/docker.sock:/var/run/docker.sock') { 
+  docker.image('docker:latest').inside('--privileged -v /var/run/docker.sock:/var/run/docker.sock') { 
     try {
       stage("docker check") {
         sh("echo makbomb DevOps lessons")
