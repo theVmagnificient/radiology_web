@@ -8,7 +8,7 @@ node("ml3") {
         checkout scm 
       }
       stage("kafka start") {
-        dir("kafka") {
+          sh("cd kafka") 
           sh("pwd")
           sh("chmod +x setup.sh")
           sh("ls")
@@ -17,7 +17,6 @@ node("ml3") {
           sh("sleep 5")
           sh("echo Kafka cluster started")
         }
-      }
       /* spin up main part here */
       stage("start") {
         sh("cd ../")
