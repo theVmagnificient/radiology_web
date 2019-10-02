@@ -1,14 +1,14 @@
 node("ml3") {
-  docker.image('docker:latest').inside { 
+  docker.image('docker:latest').inside('-v /var/run/docker.sock:/var/run/docker.sock') { 
     try {
-      stage("stage1") {
+      stage("docker check") {
         sh("echo makbomb DevOps lessons")
+        sh(docker version)
       }
       stage("checkout") {
         checkout scm 
       }
       stage("kafka start") {
-          sh("sleep 300")
           sh("ls ${WORKSPACE}\"/kafka/\"")
           sh("chmod +x ${WORKSPACE}\"/kafka/setup.sh\"")
           sh("${WORKSPACE}\"/kafka/setup.sh\"")
