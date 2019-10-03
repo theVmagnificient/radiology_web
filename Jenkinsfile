@@ -8,6 +8,8 @@ node("ml2") {
         checkout scm
       }
       stage("validation") {
+	sh("sudo apt-get install git-lfs")
+	sh("git lfs install")
         sh("git lfs pull")
         sh("git lfs fetch") 
     	
