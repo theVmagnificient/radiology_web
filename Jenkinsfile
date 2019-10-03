@@ -9,6 +9,7 @@ node("ml2") {
       }
       stage("kafka start") {
 	  dir("${WORKSPACE}/kafka") {
+	     sh("pwd && ls")
 	     sh("chmod +x setup.sh")
 	     sh(". setup.sh")
 	     sh("docker-compose up --detach")
