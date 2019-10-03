@@ -4,19 +4,20 @@ def getJenkinsMaster() {
 
 node("ml2") {
     try {
-      stage("docker check") {
+      stage("Docker check") {
         sh("echo makbomb DevOps lessons")
         sh("docker version")
 	println	"Master node: "
         println getJenkinsMaster()
       }
-      stage("checkout") {
+      stage("Checkout version") {
         checkout scm
       }
-      stage("validation") {
-	String ip = "kirill@" + getJenkinsMaster() + ":~/weights"
+      stage("Validate files integrity") {
+	String ip = "kirill@" + getJenkinsMaster() + ":~/radioweb_jenkins/"
 	
-        sh("scp -r " + ip + " dnn_backend/") 
+        sh("scp -r " + ip + "weights dnn_backend/") 
+        sh("scp " + ip + "research.zip tests/code/")
     	
 	sh '''#!/bin/bash
 	      echo "Checking size of weights files"
@@ -30,7 +31,7 @@ node("ml2") {
 	      fi
 	'''
       }
-      stage("kafka start") {
+      stage("Kafka cluster start") {
 	  dir("${WORKSPACE}/kafka") {
 	     sh("pwd && ls")
 	     sh("chmod +x setup.sh")
@@ -41,7 +42,7 @@ node("ml2") {
 	  }
         }
       /* spin up main part here */
-      stage("start") {
+      stage("Main part start") {
         dir("${WORKSPACE}/") {
           sh("chmod +x setup.sh")
 	  sh("./setup.sh")
@@ -51,12 +52,12 @@ node("ml2") {
           sh("echo main part started")
         }
       }
-      stage("test") {
+      stage("Test dnn backend") {
         dir("${WORKSPACE}/tests") {
           sh("docker-compose up --force-recreate > log.tests")
         }
       }
-      stage("archive") {
+      stage("Archive artifacts") {
         archiveArtifacts("**/*.tests*")
       }
     }
@@ -64,7 +65,7 @@ node("ml2") {
       println(error)
       currentBuild.result = "FAILURE"
     } finally { 
-       stage("clear") {
+       stage("Clear") {
        dir("${WORKSPACE}/kafka") { 
          sh("docker-compose down")
        }
