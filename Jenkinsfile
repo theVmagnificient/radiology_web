@@ -11,7 +11,7 @@ node("ml2") {
 	  dir("${WORKSPACE}/kafka") {
 	     sh("pwd && ls")
 	     sh("chmod +x setup.sh")
-	     sh(". setup.sh")
+	     sh("./setup.sh")
 	     sh("docker-compose up --detach")
 	     sh("sleep 5")
 	     sh("echo Kafka cluster started")
@@ -21,7 +21,7 @@ node("ml2") {
       stage("start") {
         dir("${WORKSPACE}/") {
           sh("chmod +x setup.sh")
-	  sh(". setup.sh")
+	  sh("./setup.sh")
           sh("docker-compose up --detach --force-recreate")
           sh("sleep 5")
           sh("echo main part started")
