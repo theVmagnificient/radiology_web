@@ -18,7 +18,7 @@ node("ml2") {
 	
         sh("scp -r " + ip + " dnn_backend/") 
     	
-	bash '''#!/bin/bash
+	sh '''#!/bin/bash
 		echo "Checking size of weights files"
 		str=$(find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')                                                                                                                                                                                                                       if [ -z "$str" ]; then                                                                                                                                                        echo "OK"                                                                                                                                                                   exit 0                                                                                                                                                                    else                                                                                                                                                                          exit 125                                                                                                                                                                  fi           
 	'''
