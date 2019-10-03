@@ -5,7 +5,17 @@ node("ml2") {
         sh("docker version")
       }
       stage("checkout") {
-        checkout scm 
+        checkout scm
+	sh("curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash") 
+ 	sh("sudo apt-get install git-lfs")
+ 	sh("git lfs install")
+        sh("git lfs pull")
+        sh("git lfs fetch")
+    	
+	bash '''#!/bin/bash
+		echo "Checking size of weights files"
+		str=$(find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')                                                                                                                                                                                                                       if [ -z "$str" ]; then                                                                                                                                                        echo "OK"                                                                                                                                                                   exit 0                                                                                                                                                                    else                                                                                                                                                                          exit 125                                                                                                                                                                  fi           
+	'''
       }
       stage("kafka start") {
 	  dir("${WORKSPACE}/kafka") {
