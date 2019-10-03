@@ -8,11 +8,11 @@ node("ml2") {
         checkout scm
       }
       stage("validation") {
-	sh("curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash") 
+/*	sh("curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash") 
  	sh("sudo apt-get install git-lfs")
  	sh("git lfs install")
         sh("git lfs pull")
-        sh("git lfs fetch")
+        sh("git lfs fetch") */
     	
 	bash '''#!/bin/bash
 		echo "Checking size of weights files"
