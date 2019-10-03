@@ -6,6 +6,8 @@ node("ml2") {
       }
       stage("checkout") {
         checkout scm
+      }
+      stage("validation") {
 	sh("curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash") 
  	sh("sudo apt-get install git-lfs")
  	sh("git lfs install")
