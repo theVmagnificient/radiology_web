@@ -1,4 +1,4 @@
-FROM thev1/dnn_libs
+FROM thev1/dnn_libs:noentry
 LABEL Lopatin Kirill <kirill.v.lopatin@gmail.com>
 
 WORKDIR /app
