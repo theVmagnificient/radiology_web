@@ -19,7 +19,8 @@ node("ml2") {
       /* spin up main part here */
       stage("start") {
         dir("${WORKSPACE}/") {
-          sh("chmod +x setup.sh && . setup.sh")
+          sh("chmod +x setup.sh")
+	  sh(". setup.sh")
           sh("docker-compose up --detach --force-recreate")
           sh("sleep 5")
           sh("echo main part started")
