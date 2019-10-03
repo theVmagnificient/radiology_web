@@ -7,13 +7,13 @@ node("ml2") {
       stage("docker check") {
         sh("echo makbomb DevOps lessons")
         sh("docker version")
-	println	getJenkinsMaster()
+	println	"Master node: ", getJenkinsMaster()
       }
       stage("checkout") {
         checkout scm
       }
       stage("validation") {
-        sh("scp -r kirill@") 
+        sh("scp -r kirill@getJenkinsMaster():~/weights dnn_backend/") 
     	
 	bash '''#!/bin/bash
 		echo "Checking size of weights files"
