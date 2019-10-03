@@ -20,7 +20,14 @@ node("ml2") {
     	
 	sh '''#!/bin/bash
 		echo "Checking size of weights files"
-		str=$(find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')                                                                                                                                                                                                                       if [ -z "$str" ]; then                                                                                                                                                        echo "OK"                                                                                                                                                                   exit 0                                                                                                                                                                    else                                                                                                                                                                          exit 125                                                                                                                                                                  fi           
+                str=$(find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')
+                if [ -z "$str" ]; then 
+		  echo "OK"
+                  exit 0
+                else
+                  echo "Some files are < 1 MB
+                  exit 125
+		fi
 	'''
       }
       stage("kafka start") {
