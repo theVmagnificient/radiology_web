@@ -45,6 +45,7 @@ node("ml2") {
         dir("${WORKSPACE}/") {
           sh("chmod +x setup.sh")
 	  sh("./setup.sh")
+          sh("docker-compose build)
           sh("docker-compose up --detach --force-recreate")
           sh("sleep 5")
           sh("echo main part started")
@@ -52,11 +53,11 @@ node("ml2") {
       }
       stage("test") {
         dir("${WORKSPACE}/tests") {
-          sh("docker-compose up --force-recreate > tests")
+          sh("docker-compose up --force-recreate > log.tests")
         }
       }
       stage("archive") {
-        archiveArtifacts("tests")
+        archiveArtifacts("**/*.tests*")
       }
     }
     catch(String error) {
