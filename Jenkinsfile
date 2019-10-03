@@ -62,9 +62,18 @@ node("ml2") {
     catch(String error) {
       println(error)
       currentBuild.result = "FAILURE"
-    }
-    stage("clear") {
-      cleanWs()
-      sh("docker-compose rm tests")
-    }
+    } finally { 
+       stage("clear") {
+       dir("${WORKSPACE}/kafka") { 
+         docker-compose down
+       }
+       dir("${WORKSPACE}") {
+         docker-compose down
+       }
+       dir("${WORKSPACE}/tests") {
+         docker-compose down
+       }
+       cleanWs()
+     }
+   }
 }
