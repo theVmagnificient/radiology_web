@@ -14,7 +14,9 @@ node("ml2") {
         checkout scm
       }
       stage("validation") {
-        sh("scp -r kirill@getJenkinsMaster():~/weights dnn_backend/") 
+	String ip = "kirill@" + getJenkinsMaster() + "~/weights"
+	
+        sh("scp -r " ip + " dnn_backend/") 
     	
 	bash '''#!/bin/bash
 		echo "Checking size of weights files"
