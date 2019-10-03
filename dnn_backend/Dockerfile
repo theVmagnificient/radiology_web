@@ -8,4 +8,4 @@ COPY weights /app/weights
 
 ENV PATH /miniconda/bin:$PATH
 
-ENTRYPOINT ["/bin/bash"]
+CMD ["/bin/bash"]
