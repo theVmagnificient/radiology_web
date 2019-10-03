@@ -1,16 +1,19 @@
+def getJenkinsMaster() {
+    return env.BUILD_URL.split('/')[2].split(':')[0]
+}
+
 node("ml2") {
     try {
       stage("docker check") {
         sh("echo makbomb DevOps lessons")
         sh("docker version")
+	println	getJenkinsMaster()
       }
       stage("checkout") {
         checkout scm
       }
       stage("validation") {
-	sh("git lfs install")
-        sh("git lfs pull")
-        sh("git lfs fetch") 
+        sh("scp -r kirill@") 
     	
 	bash '''#!/bin/bash
 		echo "Checking size of weights files"
