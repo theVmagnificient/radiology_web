@@ -65,13 +65,13 @@ node("ml2") {
     } finally { 
        stage("clear") {
        dir("${WORKSPACE}/kafka") { 
-         docker-compose down
+         sh("docker-compose down")
        }
        dir("${WORKSPACE}") {
-         docker-compose down
+         sh("docker-compose down")
        }
        dir("${WORKSPACE}/tests") {
-         docker-compose down
+         sh("docker-compose down")
        }
        cleanWs()
      }
