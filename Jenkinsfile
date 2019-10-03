@@ -14,7 +14,7 @@ node("ml2") {
         checkout scm
       }
       stage("validation") {
-	String ip = "kirill@" + getJenkinsMaster() + "~/weights"
+	String ip = "kirill@" + getJenkinsMaster() + ":~/weights"
 	
         sh("scp -r " + ip + " dnn_backend/") 
     	
