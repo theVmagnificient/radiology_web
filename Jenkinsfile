@@ -7,7 +7,8 @@ node("ml2") {
       stage("docker check") {
         sh("echo makbomb DevOps lessons")
         sh("docker version")
-	println	"Master node: ", getJenkinsMaster()
+	println	"Master node: "
+        println getJenkinsMaster()
       }
       stage("checkout") {
         checkout scm
