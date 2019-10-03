@@ -9,20 +9,26 @@ node("ml2") {
       }
       stage("kafka start") {
 	  dir("${WORKSPACE}/kafka") {
-          sh("chmod +x setup.sh")
-          sh(". setup.sh")
-          sh("docker-compose up --detach")
-          sh("sleep 5")
-          sh("echo Kafka cluster started")
+	     sh("chmod +x setup.sh")
+	     sh(". setup.sh")
+	     sh("docker-compose up --detach")
+	     sh("sleep 5")
+	     sh("echo Kafka cluster started")
 	  }
         }
       /* spin up main part here */
       stage("start") {
-        sh("chmod +x setup.sh && setup.sh")
-        sh("docker-compose up --detach --force-recreate")
+        dir("${WORKSPACE}/") {
+          sh("chmod +x setup.sh && . setup.sh")
+          sh("docker-compose up --detach --force-recreate")
+          sh("sleep 5")
+          sh("echo main part started")
+        }
       }
       stage("test") {
-        sh("cd tests && docker-compose up --force-recreate > tests")
+        dir("${WORKSPACE}/tests") {
+          sh("docker-compose up --force-recreate > tests")
+        }
       }
       stage("archive") {
         archiveArtifacts("tests")
