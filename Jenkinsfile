@@ -55,7 +55,8 @@ node("ml2") {
       stage("Test dnn backend") {
         dir("${WORKSPACE}/tests") {
           sh("docker-compose build")
-          sh("docker-compose up --force-recreate > log.tests")
+          sh("docker-compose up --force-recreate")
+	  sh("docker-compose logs --no-color >& log.tests")
         }
       }
       stage("Archive artifacts") {
