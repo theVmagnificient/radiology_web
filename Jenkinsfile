@@ -19,8 +19,7 @@ node("ml2") {
         sh("scp -r " + ip + "weights dnn_backend/") 
         sh("scp " + ip + "research.zip tests/code/")
     	
-        def str = sh(script: '#!/bin/bash
-	      find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')', returnStdout: true)
+        def str = sh(script: find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')', returnStdout: true)
         if (str != null) {
            println "Not all containers started"
         }
