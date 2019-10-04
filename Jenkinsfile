@@ -57,10 +57,12 @@ node("ml2") {
           sh("docker-compose up --force-recreate")
 	  sh("docker-compose logs --no-color > tests.log")
 	  sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
+	  sh("ls")
         }
       }
       stage("Archive artifacts") {
         archiveArtifacts("**/*.log*")
+        archiveArtifacts("**/*.test*")
       }
     }
     catch(String error) {
