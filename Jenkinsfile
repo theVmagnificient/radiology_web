@@ -19,17 +19,15 @@ node("ml2") {
         sh("scp -r " + ip + "weights dnn_backend/") 
         sh("scp " + ip + "research.zip tests/code/")
     	
-	sh '''#!/bin/bash
-	      echo "Checking size of weights files"
-              str=$(find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')
-              if [ -z "$str" ]; then 
-		  echo "OK"
-                  exit 0
-              else
-                  echo "Some files are < 1 MB"
-                  exit 125
-	      fi
-	'''
+	def str = sh(script: '#!/bin/bash
+                     find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk '{print $1}' | sed 's/M//' | awk '$1 < 1 {print "FAILED"}; END {}')', returnStdout: true)
+	
+	if (str != null) {
+	  println "Not all containers started"
+	}
+	else {
+	  println "Main cluster started"
+	}
       }
       stage("Kafka cluster start") {
 	  dir("${WORKSPACE}/kafka") {
@@ -48,7 +46,7 @@ node("ml2") {
 	  sh("./setup.sh")
           sh("docker-compose build")
           sh("docker-compose up --force-recreate --detach")
-          sh("docker-compose logs --no-color >& dnn_build.log")
+          sh("#!/bin/bash\ndocker-compose logs --no-color >& dnn_build.log")
           sh("sleep 20")
 	  sh("cd tests && chmod +x check_build.sh && ./check_build.sh")    
           sh("echo main part started")
@@ -58,7 +56,7 @@ node("ml2") {
         dir("${WORKSPACE}/tests") {
           sh("docker-compose build")
           sh("docker-compose up --force-recreate")
-	  sh("docker-compose logs --no-color >& tests.log")
+	  sh("#!/bin/bash\ndocker-compose logs --no-color >& tests.log")
         }
       }
       stage("Archive artifacts") {
