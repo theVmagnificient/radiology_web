@@ -47,7 +47,8 @@ node("ml2") {
           sh("chmod +x setup.sh")
 	  sh("./setup.sh")
           sh("docker-compose build")
-          sh("docker-compose up --abort-on-container-exit --force-recreate")
+          sh("docker-compose up --force-recreate --detach")
+          sh("docker-compose logs --no-color >& dnn_build.log")
           sh("sleep 20")
 	  sh("cd tests && chmod +x check_build.sh && ./check_build.sh")    
           sh("echo main part started")
@@ -57,11 +58,11 @@ node("ml2") {
         dir("${WORKSPACE}/tests") {
           sh("docker-compose build")
           sh("docker-compose up --force-recreate")
-	  sh("docker-compose logs --no-color >& log.tests")
+	  sh("docker-compose logs --no-color >& tests.log")
         }
       }
       stage("Archive artifacts") {
-        archiveArtifacts("**/*.tests*")
+        archiveArtifacts("**/*.log*")
       }
     }
     catch(String error) {
