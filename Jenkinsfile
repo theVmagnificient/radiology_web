@@ -62,7 +62,8 @@ node("ml2") {
       }
       stage("Archive artifacts") {
         archiveArtifacts("**/*.log*")
-        archiveArtifacts("**/*.test*")
+        archiveArtifacts("**/*test*")
+        junit("**/dnn_tests.xml")
       }
     }
     catch(String error) {
