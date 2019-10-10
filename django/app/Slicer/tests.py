@@ -22,6 +22,8 @@ class UploadResearchTest(TestCase):
 
     def setUp(self):
         zip_path = os.path.join(settings.BASE_DIR, "static", "research_storage", "zips", "research.zip")
+        copyfile(os.path.join(settings.BASE_DIR, "tests/research.zip"), zip_path) 
+        print("Zipfile copied!")
 
         try:
             resp = extract_zip(zip_path)
@@ -52,7 +54,7 @@ class UploadResearchTest(TestCase):
 
         avroProducer.produce(topic='dnn.results', value=self.test_prediction_nods)
         print("msg produced")
-        print("Waiting for consumer`s answer", sep='')
+        print("Waiting for consumer`s answer")
 
         res = self.test_database_updated()
         self.assertEqual(res.prediction_nods, self.test_prediction_nods)
