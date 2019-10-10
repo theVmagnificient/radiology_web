@@ -37,6 +37,9 @@ else:
 FeedbackTelegramChannelToken = "701215222:AAGjMuomEawq3fwJQHqfXmJkZCrKKURnCv0"
 FeedbackTelegramChatId = "-1001398424643"
 
+TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
+TEST_OUTPUT_FILE_NAME	= os.path.join(BASE_DIR, 'tests/tests.xml')
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',

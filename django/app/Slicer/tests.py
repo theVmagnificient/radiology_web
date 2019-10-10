@@ -3,7 +3,14 @@ from django.test import TestCase
 from .models import Research
 from .slicer import extract_zip, process, call_prediction
 
+from confluent_kafka import avro
+from confluent_kafka import KafkaError
+from confluent_kafka.avro import AvroConsumer
+from confluent_kafka import Consumer, KafkaError
+from confluent_kafka.avro import AvroProducer
+
 from shutil import copyfile
+from django.conf import settings
 import time
 import os
 
@@ -37,19 +44,15 @@ class UploadResearchTest(TestCase):
         return res[0]
     
     def test_django_consumer(self):
-        value_schema = avro.load('avro_sch/dnn_res_prod.json')
+        value_schema = avro.load('/app/Slicer/avro_sch/dnn_res_prod.json')
         avroProducer = AvroProducer({
             'bootstrap.servers': KAFKA_BROKER_URL,
             'schema.registry.url': 'http://schema_registry:8081'
         }, default_value_schema=value_schema)
 
-        avroProducer.produce(topic='dnn.results', value=value)
+        avroProducer.produce(topic='dnn.results', value=self.test_prediction_nods)
         print("msg produced")
         print("Waiting for consumer`s answer", sep='')
-        for i in range(10):
-            time.sleep(1)
-            print('.', sep='')
-        print()
 
         res = self.test_database_updated()
-        self.assertEqual(res.prediction_nods, test_prediction_nods)
+        self.assertEqual(res.prediction_nods, self.test_prediction_nods)
