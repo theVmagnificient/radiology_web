@@ -29,7 +29,7 @@ COPY ./app /app
 
 RUN pip install confluent-kafka 
 RUN pip install confluent-kafka[avro] 
-RUN mkdir -p /app/tests
+WORKDIR /app/tests
 
 ENV DJANGO_ENV=prod
 

@@ -20,7 +20,6 @@ node("ml2") {
 	
         sh("scp -r " + ip + "weights dnn_backend/") 
         sh("scp " + ip + "research.zip tests/code/")
-	sh("cp tests/code/research.zip django/app/Slicer")
     	
         def str = sh(script: 'find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk \'{print $1}\' | sed \'s/M//\' | awk \'$1 < 1 {print "FAILED"}; END {}\'', returnStdout: true)
 	println str
@@ -57,6 +56,7 @@ node("ml2") {
       }
       stage("Test django module") { 
        dir("${WORKSPACE}") {
+         sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
 	 sleep 500
          sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
          sh("docker cp \$(docker-compose ps -q django):/app/tests/tests.xml .")
