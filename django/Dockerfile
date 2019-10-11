@@ -27,8 +27,9 @@ RUN pip install -r requirements.txt
 WORKDIR /app
 COPY ./app /app
 
-RUN pip install confluent-kafka confluent-kafka[avro] unittest-xml-reporting
-RUN mkdir /app/tests
+RUN pip install confluent-kafka 
+RUN pip install confluent-kafka[avro] 
+RUN mkdir tests
 
 ENV DJANGO_ENV=prod
 
