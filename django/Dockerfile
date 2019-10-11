@@ -24,12 +24,11 @@ RUN echo "INSTALLING requirements\n"
 COPY ./requirements.txt /requirements.txt
 RUN pip install -r requirements.txt 
 
-RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
 
-RUN pip install confluent-kafka
-RUN pip install confluent-kafka[avro]
+RUN pip install confluent-kafka confluent-kafka[avro] unittest-xml-reporting
+RUN mkdir /app/tests
 
 ENV DJANGO_ENV=prod
 

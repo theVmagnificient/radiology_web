@@ -18,8 +18,10 @@ node("ml2") {
 	
         sh("scp -r " + ip + "weights dnn_backend/") 
         sh("scp " + ip + "research.zip tests/code/")
+	sh("cp tests/code/research.zip django/app/Slicer")
     	
         def str = sh(script: 'find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk \'{print $1}\' | sed \'s/M//\' | awk \'$1 < 1 {print "FAILED"}; END {}\'', returnStdout: true)
+	println str
         if (str != "") {
            println "Not all containers started"
 	   exit 1
@@ -50,6 +52,12 @@ node("ml2") {
 	  sh("cd tests && chmod +x check_build.sh && ./check_build.sh")    
           sh("echo main part started")
         }
+      }
+      stage("Test django module") { 
+       dir("${WORKSPACE}") {
+         sh("docker-compose exec django /bin/bash -c "cd app && python manage.py tests")
+         sh("docker cp \$(docker-compose ps -q django):/app/test/tests.xml .")
+       }
       }
       stage("Test dnn backend") {
         dir("${WORKSPACE}/tests") {

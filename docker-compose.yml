@@ -60,7 +60,7 @@ services:
       TRANSACTIONS_TOPIC: dnn.data
       PRODUCER_TOPIC: dnn.results
       KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
-      CUDA_VISIBLE_DEVICES: 0
+      CUDA_VISIBLE_DEVICES: cpu
     volumes:
       - aimed_archives:/mnt/archives
       - aimed_results:/mnt/results
@@ -68,11 +68,6 @@ services:
     ports:
       - "12222:22"
     command: ["/bin/bash", "-c", "source activate aimed && cd /app/source/ && python3 dnn_server.py"]
-    healthcheck:
-      test: curl --fail -s http://localhost:12222/ || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
         #command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 
 networks:
