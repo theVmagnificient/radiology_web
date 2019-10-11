@@ -58,7 +58,7 @@ node("ml2") {
       stage("Test django module") { 
        dir("${WORKSPACE}") {
          sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
-         sh("docker cp \$(docker-compose ps -q django):/app/test/tests.xml .")
+         sh("docker cp \$(docker-compose ps -q django):/app/tests/tests.xml .")
        }
       }
       stage("Test dnn backend") {
@@ -72,7 +72,7 @@ node("ml2") {
       }
       stage("Archive artifacts") {
         archiveArtifacts("**/*.log*")
-        archiveArtifacts("**/*test*")
+        archiveArtifacts("**/*tests*")
         junit("**/dnn_tests.xml")
       }
     }
