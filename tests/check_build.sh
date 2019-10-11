@@ -1,6 +1,7 @@
 #!/bin/bash
 
-num=$(docker ps -a --filter name=radiology_web_jenkins --filter status=running | wc -l)
+echo Docker postfix: $1
+num=$(docker ps -a --filter name=radiology_web_$1 --filter status=running | wc -l)
 
 if (( num < 6 ))
 then

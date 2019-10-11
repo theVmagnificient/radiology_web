@@ -51,7 +51,7 @@ node("ml2") {
           sh("docker-compose up --force-recreate --detach")
           sh("docker-compose logs --no-color > dnn_build.log")
           sh("sleep 20")
-	  sh("cd tests && chmod +x check_build.sh && ./check_build.sh")    
+	  sh("cd tests && chmod +x check_build.sh && ./check_build.sh $BRANCH_NAME")    
           sh("echo main part started")
         }
       }
