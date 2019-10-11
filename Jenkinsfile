@@ -56,6 +56,7 @@ node("ml2") {
       }
       stage("Test django module") { 
        dir("${WORKSPACE}") {
+         sh("ls tests/code/")
          sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
 	 sleep 500
          sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
