@@ -54,7 +54,7 @@ node("ml2") {
           sh("echo main part started")
         }
       }
-      parallel {
+//      parallel {
 	      stage("Test django module") { 
 	       dir("${WORKSPACE}") {
 		 sh("ls tests/code/")
@@ -72,7 +72,7 @@ node("ml2") {
 		  sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
 		}
 	      }
-      }
+ //     }
       stage("Archive artifacts") {
         archiveArtifacts("**/*.log*")
         archiveArtifacts("**/*tests*")
