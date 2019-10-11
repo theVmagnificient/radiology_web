@@ -35,3 +35,4 @@ matplotlib
 pandas
 psycopg2==2.7.3.2
 zipfile36
+unittest-xml-reporting

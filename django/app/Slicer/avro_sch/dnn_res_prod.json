@@ -1,0 +1,37 @@
+{
+  "namespace": "aimed",
+  "name": "result",
+  "type": "record",
+  "fields": [
+    {
+      "name": "code",
+      "type": "string"
+    },
+    {
+      "name": "path",
+      "type": "string"
+    },
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "nods",
+      "type": {
+       "type": "array",
+       "items": {
+         "name": "coords",
+         "type": "record",
+         "fields": [
+             {"name": "uid", "type": "string"},
+             {"name": "sliceNum", "type": "int"},
+             {"name": "coordX1", "type": "int"},
+             {"name": "coordY1", "type": "int"},
+             {"name": "coordX2", "type": "int"},
+             {"name": "coordY2", "type": "int"}
+           ]
+       }
+      }
+    }
+  ]
+}
