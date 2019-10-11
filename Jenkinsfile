@@ -60,6 +60,7 @@ node("ml2") {
 		 sh("ls tests/code/")
 		 sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
 		 sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
+                 sleep 500
 		 sh("docker cp \$(docker-compose ps -q django):/app/tests/tests.xml . && mv tests.xml django_tests.xml")
 	       }
 	      }
