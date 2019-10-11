@@ -9,8 +9,9 @@ node("ml2") {
         sh("docker version")
 	println	"Master node: "
         println getJenkinsMaster()
-        println "Branch name: " + ${GIT_LOCAL_BRANCH}
-      }
+        println "Branch name: "
+        echo env.BRANCH_NAME
+     }
       stage("Checkout version") {
         checkout scm
       }
