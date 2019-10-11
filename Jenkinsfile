@@ -57,7 +57,7 @@ node("ml2") {
       }
       stage("Test django module") { 
        dir("${WORKSPACE}") {
-         sh("docker-compose exec django /bin/bash -c \"cd app && python manage.py tests\"")
+         sh("docker-compose exec django /bin/bash -c \"python manage.py test\"")
          sh("docker cp \$(docker-compose ps -q django):/app/test/tests.xml .")
        }
       }
