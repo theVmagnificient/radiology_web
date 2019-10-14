@@ -9,7 +9,7 @@ def prepareBuildStages() {
 
   def buildStages = [:]
 
-  buildStages.put("Kafka cluster", 
+  buildStages.put("Kafka docker", {
       stage("Kafka cluster start") {
 	     dir("${WORKSPACE}/kafka") {
 	       sh("pwd && ls")
@@ -18,22 +18,24 @@ def prepareBuildStages() {
 	       sh("docker-compose up --detach")
 	       sh("sleep 5")
 	       sh("echo Kafka cluster started")
-	    }
+	     }
+      }
     }
-  )
+   )
 
-  buildStages.put("Main part", 
+  buildStages.put("Main docker", {
       /* spin up main part here */
-      stage("Main part start") {
-        dir("${WORKSPACE}/") {
-          sh("chmod +x setup.sh")
-	        sh("./setup.sh")
-          sh("docker-compose build")
-          sh("docker-compose up --force-recreate --detach")
-          sh("docker-compose logs --no-color > dnn_build.log")
-          sh("sleep 20")
-	        sh("cd tests && chmod +x check_build.sh && ./check_build.sh $BRANCH_NAME")    
-          sh("echo main part started")
+        stage("Main part start") {
+         dir("${WORKSPACE}/") {
+            sh("chmod +x setup.sh")
+	          sh("./setup.sh")
+            sh("docker-compose build")
+            sh("docker-compose up --force-recreate --detach")
+            sh("docker-compose logs --no-color > dnn_build.log")
+            sh("sleep 20")
+	          sh("cd tests && chmod +x check_build.sh && ./check_build.sh $BRANCH_NAME")    
+            sh("echo main part started")
+          }
         }
       }
     )
