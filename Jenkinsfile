@@ -88,7 +88,7 @@ node("ml2") {
       stage('Initialise') {
         // Set up List<Map<String,Closure>> describing the builds
         buildStages = prepareBuildStages()
-        testStages = preparetestStages()
+        testStages = prepareTestStages()
         println("Initialised pipeline.")
      }
       stage("Docker check") {
