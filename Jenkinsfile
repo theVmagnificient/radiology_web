@@ -4,6 +4,7 @@ def getJenkinsMaster() {
 
 // Create List of build stages to suit
 def prepareBuildStages() {
+  echo "Preparing docker stages"
   def buildList = []
 
   def buildStages = [:]
