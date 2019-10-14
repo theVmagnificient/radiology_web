@@ -32,6 +32,7 @@ class dnnServer(threading.Thread):
             print("Msg caught", msg)
 
             if msg['command'] == 'start' and os.path.exists(os.path.join(self.volume_path, msg['path'])):
+                print("Got msg: ", msg)
                 start_time = time.time()
                 try:
                     self.executor.pipe.cf.save_path = os.path.join(self.executor.pipe.cf.root_path_to_save,

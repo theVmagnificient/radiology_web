@@ -32,7 +32,6 @@ def test_dnn_success():
           }, default_value_schema=value_schema)
 
     avroProducer.produce(topic='dnn.data', value=value)
-    print("msg produced")
 
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
@@ -84,8 +83,6 @@ def test_dnn_broken_msg():
           }, default_value_schema=value_schema)
 
     avroProducer.produce(topic='dnn.data', value=value)
-    print("msg produced")
-
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
     'group.id': 'groupid',
