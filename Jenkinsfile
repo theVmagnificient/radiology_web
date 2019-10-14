@@ -46,7 +46,41 @@ def prepareBuildStages() {
   return buildList
 }
 
+// Create list of test stages 
+def prepareTestStages() {
+  echo "Preparing test stages"
+  def buildList = []
+
+  def buildStages = [:]
+
+  buildStages.put("Django test", {
+	      stage("Test dnn backend") {
+		      dir("${WORKSPACE}/tests") {
+		        sh("docker-compose build")
+            sh("docker-compose up --force-recreate")
+            sh("docker-compose logs --no-color > tests.log")
+            sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
+          }
+	      }
+      })
+  buildStages.put("DNN test", {
+          stage("Test dnn backend") {
+            dir("${WORKSPACE}/tests") {
+              sh("docker-compose build")
+              sh("docker-compose up --force-recreate")
+              sh("docker-compose logs --no-color > tests.log")
+              sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
+            }
+          }
+      })
+
+  buildList.add(buildStages)
+
+  return buildList
+}
+
 def buildStages 
+def testStages
 def runParallel = true
 
 node("ml2") {
@@ -54,6 +88,7 @@ node("ml2") {
       stage('Initialise') {
         // Set up List<Map<String,Closure>> describing the builds
         buildStages = prepareBuildStages()
+        testStages = preparetestStages()
         println("Initialised pipeline.")
      }
       stage("Docker check") {
@@ -109,16 +144,25 @@ node("ml2") {
       } */
       for (builds in buildStages) {
         if (runParallel) {
-        parallel(builds)
+          parallel(builds)
       } else {
           // run serially (nb. Map is unordered! )
           for (build in builds.values()) {
              build.call()
           }
         } 
-      }   
+      }
+      for (tests in testStages) {
+        if (runParallel) {
+          parallel(tests)
+        } else {
+          for (test in test.values()) {
+            test.call()
+          }
+        }
+      }
 //      parallel {
-	      stage("Test django module") { 
+/*	      stage("Test django module") { 
 	       dir("${WORKSPACE}") {
 		 sh("ls tests/code/")
 		 sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
@@ -134,7 +178,7 @@ node("ml2") {
 		  sh("docker-compose logs --no-color > tests.log")
 		  sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
 		}
-	      }
+	      } */
  //     }
       stage("Archive artifacts") {
         archiveArtifacts("**/*.log*")
