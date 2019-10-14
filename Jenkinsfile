@@ -54,13 +54,14 @@ def prepareTestStages() {
   def buildStages = [:]
 
   buildStages.put("Django test", {
-	      stage("Test dnn backend") {
-		      dir("${WORKSPACE}/tests") {
-		        sh("docker-compose build")
-            sh("docker-compose up --force-recreate")
-            sh("docker-compose logs --no-color > tests.log")
-            sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
-          }
+         stage("Test django") {
+	         dir("${WORKSPACE}") {
+             sh("ls tests/code/")
+            sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
+            sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
+            sleep 30
+            sh("docker cp \$(docker-compose ps -q django):/app/tests/tests.xml . && mv tests.xml django_tests.xml")
+	       }
 	      }
       })
   buildStages.put("DNN test", {
