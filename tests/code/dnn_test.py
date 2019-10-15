@@ -51,14 +51,15 @@ def test_dnn_success():
 
         if msg is None:
             continue
-        if msg["id"] != "test_dnn_success":
-            print("Skipping msg with id", msg["id"])
-            continue
         if msg.error():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
         msg = msg.value()
         
+        if msg["id"] != "test_dnn_success":
+            print("Skipping msg with id", msg["id"])
+            continue
+
         assert msg["code"] == "success", "Inference failed" 
 
         assert type(msg) == dict, "Wrong type of msg variable"
