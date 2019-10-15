@@ -24,7 +24,7 @@ def teardown_module(module):
 def test_dnn_success():
     copyfile('research.zip', '/mnt/archives/research.zip') 
     value_schema = avro.load('avro_sch/res_prod.json')
-    value = {"command": "start", "path": "research.zip", "id": "1"}
+    value = {"command": "start", "path": "research.zip", "id": "test_dnn_success"}
 
     avroProducer = AvroProducer({
            'bootstrap.servers': KAFKA_BROKER_URL,
@@ -51,7 +51,9 @@ def test_dnn_success():
 
         if msg is None:
             continue
-
+        if msg["id"] != "test_dnn_success":
+            print("Skipping msg with id", msg["id"])
+            continue
         if msg.error():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
@@ -75,7 +77,7 @@ def test_dnn_success():
 
 def test_dnn_broken_msg():
     value_schema = avro.load('avro_sch/res_prod.json')
-    value = {"command": "start", "path": "research8913enadkjnasdnksajdn", "id": "1"}
+    value = {"command": "start", "path": "research8913enadkjnasdnksajdn", "id": "test_dnn_fail"}
 
     avroProducer = AvroProducer({
            'bootstrap.servers': KAFKA_BROKER_URL,
@@ -100,6 +102,10 @@ def test_dnn_broken_msg():
             break
 
         if msg is None:
+            continue
+
+        if msg["id"] != "test_dnn_fail":
+            print("Skipping msg with id ", msg["id"])
             continue
 
         if msg.error():
