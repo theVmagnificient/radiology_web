@@ -105,14 +105,14 @@ def test_dnn_broken_msg():
         if msg is None:
             continue
 
-        if msg["id"] != "test_dnn_fail":
-            print("Skipping msg with id ", msg["id"])
-            continue
-
         if msg.error():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
         msg = msg.value()
+ 
+        if msg["id"] != "test_dnn_fail":
+            print("Skipping msg with id ", msg["id"])
+            continue
         
         assert msg["code"] == "failed", "Inference failed"
         break
