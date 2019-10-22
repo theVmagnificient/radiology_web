@@ -7,16 +7,12 @@ services:
     build:
       context: auth_aimed/.
       dockerfile: Dockerfile
-    networks:
-      - kafka-network
     depends_on:
       - db_auth
     volumes:
       - aimed_results:/mnt/results
 
   db_auth:
-    networks:
-      - kafka-network
     build:
       context: auth_aimed/database/.
 
@@ -28,8 +24,6 @@ services:
       AUTH_URL: http://auth:8082/research
     volumes:
       - aimed_results:/mnt/results
-    networks:
-      - kafka-network
 
 
 networks:

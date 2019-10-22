@@ -6,8 +6,6 @@ services:
     build:
       context: auth_aimed/.
       dockerfile: Dockerfile.test
-    networks:
-      - kafka-network
     depends_on:
       - db_auth
     volumes:
@@ -15,8 +13,6 @@ services:
     command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v 2>&1 | go-junit-report > auth_tests.xml"]
 
   db_auth:
-    networks:
-      - kafka-network
     build:
       context: auth_aimed/database/.
 
@@ -31,13 +27,9 @@ services:
       - aimed_results:/mnt/results
     depends_on:
       - flask
-    networks:
-      - kafka-network
     command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v 2>&1 | go-junit-report > bot_tests.xml"]
 
   flask:
-    networks:
-      - kafka-network
     build:
       context: flask_test_pyrogram/.
 
