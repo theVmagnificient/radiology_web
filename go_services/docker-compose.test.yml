@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  auth:
+    hostname: auth
+    build:
+      context: auth_aimed/.
+      dockerfile: Dockerfile.test
+    networks:
+      - kafka-network
+    depends_on:
+      - db_auth
+    volumes:
+      - aimed_results:/mnt/results
+    command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v"]
+
+  db_auth:
+    networks:
+      - kafka-network
+    build:
+      context: auth_aimed/database/.
+
+  bot:
+    build:
+      context: bot_aimed/.
+      dockerfile: Dockerfile.test
+    environment:
+      FLASK_TEST_URL: http://flask:5000
+      AUTH_URL: http://auth:8082/research
+    volumes:
+      - aimed_results:/mnt/results
+    depends_on:
+      - flask
+    networks:
+      - kafka-network
+    command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v"]
+
+  flask:
+    networks:
+      - kafka-network
+    build:
+      context: flask_test_pyrogram/.
+
+networks:
+  default:
+     external:
+       name: kafka-network
+
+volumes:
+  aimed_results:
+    external: true
+  
