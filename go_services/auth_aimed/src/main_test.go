@@ -89,6 +89,7 @@ func TestApis(t *testing.T) {
 
 	err = db.Ping()
 	if err != nil {
+    fmt.Println("Cannot connect to DB")
 		panic(err)
 	}
 
