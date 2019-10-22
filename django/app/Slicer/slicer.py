@@ -31,8 +31,6 @@ def extract_zip(zip_path):
     filenames = list()
     with zipfile.ZipFile(zip_path, "r") as zip_ref:
         for fn in zip_ref.namelist():
-            if fn.split(".")[-1] != "dcm":
-                return {"ok": False, "error": "Expected archive with .dicom files"}
             entry_pseudo_file = zip_ref.open(fn)
 
             # the pseudo file does not support `seek`, which is required by
