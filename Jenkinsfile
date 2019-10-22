@@ -74,6 +74,17 @@ def prepareTestStages() {
             }
           }
       })
+  buildStages.put("Telegram bot & Auth service tests", {
+          stage("Test tg bot") {
+            dir("${WORKSPACE}/go_services") {
+              sh("docker-compose -f docker-compose.test.yml build")
+              sh("docker-compose -f docker-compose.test.yml up --force-recreate")
+              sh("docker-compose lgos --no-color > tg_bot.log")
+              sh("docker cp \$(docker-compose ps -q bot):/src/bot_tests.xml")
+              sh("docker cp \$(docker-compose ps -q auth):/src/auth_tests.xml")
+            }
+          }
+      })
 
   buildList.add(buildStages)
 
@@ -108,7 +119,13 @@ node("ml2") {
 	
         sh("scp -r " + ip + "weights dnn_backend/") 
         sh("scp " + ip + "research.zip tests/code/")
-    	
+
+        sh("scp " + ip + "auth_service/db.secret go_services/auth_aimed/src")
+        sh("scp " + ip + "auth_service/init.sql go_services/auth_aimed/database")
+
+        sh("scp " + ip + "bot_tg/token.secret go_services/bot_aimed/src")
+        sh("scp " + ip + "bot_tg/test/* go_services/flask_test_pyrogram/")
+
         def str = sh(script: 'find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk \'{print $1}\' | sed \'s/M//\' | awk \'$1 < 1 {print "FAILED"}; END {}\'', returnStdout: true)
 	      println str
         if (str != "") {

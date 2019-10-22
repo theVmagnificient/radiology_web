@@ -2,5 +2,6 @@ FROM golang:alpine
 RUN apk --no-cache add build-base git bzr mercurial gcc
 RUN go get gopkg.in/tucnak/telebot.v2
 RUN go get golang.org/x/net/proxy
+RUN go get -u github.com/jstemmer/go-junit-report
 COPY src /src
 

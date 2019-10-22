@@ -12,7 +12,7 @@ services:
       - db_auth
     volumes:
       - aimed_results:/mnt/results
-    command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v"]
+    command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v 2>&1 | go-junit-report > auth_tests.xml"]
 
   db_auth:
     networks:
@@ -33,7 +33,7 @@ services:
       - flask
     networks:
       - kafka-network
-    command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v"]
+    command: ["/bin/sh", "-c", "sleep 10 && cd /src && go test -v 2>&1 | go-junit-report > bot_tests.xml"]
 
   flask:
     networks:
