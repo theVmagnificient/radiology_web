@@ -13,3 +13,5 @@ dnn_backend/source/experiments
 *.zip
 *.secret*
 *.sql
+*.ini
+*.session*
