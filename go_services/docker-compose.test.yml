@@ -10,7 +10,7 @@ services:
       - db_auth
     volumes:
       - aimed_results:/mnt/results
-    command: ["/bin/sh", "-c", "sleep 30 && cd /src && go test -v 2>&1 | go-junit-report > auth_tests.xml"]
+    command: ["/bin/sh", "-c", "sleep 300 && cd /src && go test -v 2>&1 | go-junit-report > auth_tests.xml"]
 
   db_auth:
     build:
@@ -27,7 +27,7 @@ services:
       - aimed_results:/mnt/results
     depends_on:
       - flask
-    command: ["/bin/sh", "-c", "sleep 30 && cd /src && go test -v 2>&1 | go-junit-report > bot_tests.xml"]
+    command: ["/bin/sh", "-c", "sleep 300 && cd /src && go test -v 2>&1 | go-junit-report > bot_tests.xml"]
 
   flask:
     build:
