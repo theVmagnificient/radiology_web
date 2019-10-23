@@ -79,7 +79,7 @@ def prepareTestStages() {
             dir("${WORKSPACE}/go_services") {
               println "Putting images for tests into the aimed_results volume" 
               sh("docker container create --name temp -v aimed_results:/data busybox")
-              sh("docker cp /bot_aimed/res1 temp:/data")
+              sh("docker cp bot_aimed/res1 temp:/data")
               sh("docker rm temp")
 
               sh("docker-compose -f docker-compose.test.yml build")
