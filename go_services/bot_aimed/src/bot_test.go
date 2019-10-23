@@ -171,6 +171,11 @@ func TestExampleMsg(t *testing.T) {
 
 	cases := []Case{
 		Case{
+			Token: 	"1234",
+			Body:	CR{"token": "1234"},
+			Result: CR{"message": "Bad token format | Must be 32 symbol length"},
+		},
+		Case{
 			Token: "94B8CEA57C49A3007225A0C70C475450",
 			Body:	CR{"token": "94B8CEA57C49A3007225A0C70C475450"},
 			Result: CR{"message": "photo"},
@@ -179,11 +184,6 @@ func TestExampleMsg(t *testing.T) {
 			Token: "94B8CEA57C49A3007225A0C711111111",
 			Body:	CR{"token": "94B8CEA57C49A3007225A0C711111111"},
 			Result: CR{"message": "Your record not found"},
-		},
-		Case{
-			Token: 	"1234",
-			Body:	CR{"token": "1234"},
-			Result: CR{"message": "Bad token format | Must be 32 symbol length"},
 		},
 		Case{
 			Token: 	"1234 jasdnasjkdn ajskdn a",
