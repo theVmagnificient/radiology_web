@@ -109,6 +109,11 @@ func TestPathGetter(t *testing.T) {
 
 	cases := []Case{
 		Case{
+			Token: "94B8CEA57C49A3007225A0C711111111",
+			Body:	CR{"token": "94B8CEA57C49A3007225A0C711111111"},
+			Result: []string{"Your record not found"},
+		},
+		Case{
 			Token: "94B8CEA57C49A3007225A0C70C475450",
 			Body:	CR{"token": "94B8CEA57C49A3007225A0C70C475450"},
 			Result: []string{"success", "/mnt/results/res1/1.png", "/mnt/results/res1/3.png", "/mnt/results/res1/4.png"},
@@ -119,12 +124,7 @@ func TestPathGetter(t *testing.T) {
 			Result: []string{"success", "/mnt/results/res1/1.png", "/mnt/results/res1/3.png", "/mnt/results/res1/5.png"},
 		},
 		Case{
-			Token: "94B8CEA57C49A3007225A0C711111111",
-			Body:	CR{"token": "94B8CEA57C49A3007225A0C711111111"},
-			Result: []string{"Your record not found"},
-		},
-		Case{
-			Token: 	"1234",
+			Token: "1234",
 			Body:	CR{"token": "1234"},
 			Result: []string{"Bad token format | Must be 32 symbol length"},
 		},
