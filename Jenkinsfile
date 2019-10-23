@@ -80,7 +80,6 @@ def prepareTestStages() {
               println "Putting images for tests into the aimed_results volume" 
               sh("docker container create --name temp -v aimed_results:/data busybox")
               sh("docker cp bot_aimed/res1 temp:/data")
-              sh("docker rm temp")
 
               sh("docker-compose -f docker-compose.test.yml build")
               sh("docker-compose -f docker-compose.test.yml up --force-recreate")
@@ -215,16 +214,17 @@ node("ml2") {
       currentBuild.result = "FAILURE"
     } finally { 
        stage("Clear") {
-       dir("${WORKSPACE}/kafka") { 
-         sh("docker-compose down")
-       }
-       dir("${WORKSPACE}") {
-         sh("docker-compose down")
-       }
-       dir("${WORKSPACE}/tests") {
-         sh("docker-compose down")
-       }
-       cleanWs()
+        sh("docker rm temp")
+        dir("${WORKSPACE}/kafka") { 
+          sh("docker-compose down")
+        }
+        dir("${WORKSPACE}") {
+          sh("docker-compose down")
+        }
+        dir("${WORKSPACE}/tests") {
+          sh("docker-compose down")
+        }
+        cleanWs()
      }
    }
 }
