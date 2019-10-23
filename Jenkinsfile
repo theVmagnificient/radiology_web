@@ -56,7 +56,7 @@ def prepareTestStages() {
   buildStages.put("Django test", {
          stage("Test django") {
 	         dir("${WORKSPACE}") {
-             sh("ls tests/code/")
+            sh("ls tests/code/")
             sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
             sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
             sleep 30
@@ -77,6 +77,11 @@ def prepareTestStages() {
   buildStages.put("Telegram bot & Auth service tests", {
           stage("Test tg bot") {
             dir("${WORKSPACE}/go_services") {
+              println "Putting images for tests into the aimed_results volume" 
+              sh("docker container create --name temp -v aimed_results:/data busybox")
+              sh("docker cp /bot_aimed/res1 temp:/data")
+              sh("docker rm temp")
+
               sh("docker-compose -f docker-compose.test.yml build")
               sh("docker-compose -f docker-compose.test.yml up --force-recreate")
               sh("docker-compose lgos --no-color > tg_bot.log")
@@ -125,6 +130,7 @@ node("ml2") {
 
         sh("scp " + ip + "bot_tg/token.secret go_services/bot_aimed/src")
         sh("scp " + ip + "bot_tg/test/* go_services/flask_test_pyrogram/")
+        sh("scp -r " + ip + "res1 go_services/bot_aimed/")
 
         def str = sh(script: 'find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk \'{print $1}\' | sed \'s/M//\' | awk \'$1 < 1 {print "FAILED"}; END {}\'', returnStdout: true)
 	      println str
