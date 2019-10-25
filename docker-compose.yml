@@ -67,7 +67,7 @@ services:
       - ./dnn_backend/source:/app/source
     ports:
       - "12222:22"
-    command: ["/bin/bash", "-c", "source activate aimed && cd /app/source/ && python3 dnn_server.py"]
+    command: ["/bin/bash", "-c", "sleep 1000", "source activate aimed && cd /app/source/ && python3 dnn_server.py"]
         #command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 
 networks:
