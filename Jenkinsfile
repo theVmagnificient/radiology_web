@@ -57,7 +57,7 @@ def prepareTestStages() {
          stage("Test django") {
 	         dir("${WORKSPACE}") {
             sh("ls tests/code/")
-            sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
+            sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/research123.zip")
             sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
             sleep 30
             sh("docker cp \$(docker-compose ps -q django):/app/tests/tests.xml . && mv tests.xml django_tests.xml")
