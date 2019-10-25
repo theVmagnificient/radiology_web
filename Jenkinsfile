@@ -80,10 +80,10 @@ def prepareTestStages() {
               println "Putting images for tests into the aimed_results volume" 
               sh("docker container create --name temp -v aimed_results:/data busybox")
               sh("docker cp bot_aimed/res1 temp:/data")
-
               sh("docker-compose -f docker-compose.test.yml build")
+              sh("docker-compose -f docker-compose.test.yml up -d db_auth")
               sh("docker-compose -f docker-compose.test.yml up --force-recreate")
-              sh("docker-compose lgos --no-color > tg_bot.log")
+              sh("docker-compose logs --no-color > tg_bot.log")
               sh("docker cp \$(docker-compose ps -q bot):/src/bot_tests.xml")
               sh("docker cp \$(docker-compose ps -q auth):/src/auth_tests.xml")
             }
