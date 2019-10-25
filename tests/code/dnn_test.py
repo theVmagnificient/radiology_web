@@ -75,7 +75,7 @@ def test_dnn_success():
 
 def test_dnn_broken_msg():
     value_schema = avro.load('avro_sch/res_prod.json')
-    value = {"command": "start", "path": "research8913enadkjnasdnksajdn", "id": "1"}
+    value = {"command": "start", "path": "research8913enadkjnasdnksajdn", "id": "broken"}
 
     avroProducer = AvroProducer({
            'bootstrap.servers': KAFKA_BROKER_URL,
@@ -108,6 +108,9 @@ def test_dnn_broken_msg():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
         msg = msg.value()
+
+        if msg["id"] != "broken":
+            continue
         
         assert msg["code"] == "failed", "Inference failed"
         break
