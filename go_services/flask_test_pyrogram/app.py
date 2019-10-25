@@ -50,3 +50,9 @@ def say_hello():
     print("Started")
     print("POST ", token)
     return token
+
+@app.route('/exit', methods=['GET'])
+def stop():
+    print("Stopping server")
+    os._exit(0)
+

@@ -244,4 +244,5 @@ func runCasesMsg(t *testing.T, ts *httptest.Server, bot *botTG, cases []Case) {
 			continue
 		}
 	}
+  http.Get(flaskURL + "/exit")
 }
