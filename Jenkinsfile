@@ -84,8 +84,8 @@ def prepareTestStages() {
               sh("docker-compose -f docker-compose.test.yml up -d db_auth")
               sh("docker-compose -f docker-compose.test.yml up auth bot flask")
               sh("docker-compose logs --no-color > tg_bot.log")
-              sh("docker cp \$(docker-compose ps -q bot):/src/bot_tests.xml")
-              sh("docker cp \$(docker-compose ps -q auth):/src/auth_tests.xml")
+              sh("docker cp \$(docker-compose -f docker-compose.test.yml ps -q bot):/src/bot_tests.xml")
+              sh("docker cp \$(docker-compose -f docker-compose.test.yml ps -q auth):/src/auth_tests.xml")
               sh("docker-compose -f docker-compose.test.yml down")
             }
           }
