@@ -196,7 +196,7 @@ node("ml2") {
          archiveArtifacts("**/*tests*")
          junit("**/*tests.xml")
        }
-      } catch(string error) {
+      } catch(String error) {
         println(error)
       }
        stage("Clear") {
