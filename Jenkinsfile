@@ -189,12 +189,16 @@ node("ml2") {
     catch(String error) {
       println(error)
       currentBuild.result = "FAILURE"
-    } finally { 
+    } finally {
+      try {
        stage("Archive artifacts") {
          archiveArtifacts("**/*.log*")
          archiveArtifacts("**/*tests*")
          junit("**/*tests.xml")
        }
+      } catch(string error) {
+        println(error)
+      }
        stage("Clear") {
         sh("docker rm temp")
         dir("${WORKSPACE}/kafka") { 
