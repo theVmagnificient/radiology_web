@@ -83,6 +83,7 @@ def prepareTestStages() {
               sh("docker-compose -f docker-compose.test.yml build")
               sh("docker-compose -f docker-compose.test.yml up -d db_auth")
               sh("docker-compose -f docker-compose.test.yml up")
+              sh("docker-compose -f docker-compose.test.yml down db_auth")
               sh("docker-compose logs --no-color > tg_bot.log")
               sh("docker cp \$(docker-compose ps -q bot):/src/bot_tests.xml")
               sh("docker cp \$(docker-compose ps -q auth):/src/auth_tests.xml")

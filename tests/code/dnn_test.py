@@ -24,7 +24,7 @@ def teardown_module(module):
 def test_dnn_success():
     copyfile('research.zip', '/mnt/archives/research.zip') 
     value_schema = avro.load('avro_sch/res_prod.json')
-    value = {"command": "start", "path": "research.zip", "id": "test_dnn_success"}
+    value = {"command": "start", "path": "research.zip", "id": "1"}
 
     avroProducer = AvroProducer({
            'bootstrap.servers': KAFKA_BROKER_URL,
@@ -32,6 +32,7 @@ def test_dnn_success():
           }, default_value_schema=value_schema)
 
     avroProducer.produce(topic='dnn.data', value=value)
+    print("msg produced")
 
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
@@ -51,15 +52,12 @@ def test_dnn_success():
 
         if msg is None:
             continue
+
         if msg.error():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
         msg = msg.value()
         
-        if msg["id"] != "test_dnn_success":
-            print("Skipping msg with id", msg["id"])
-            continue
-
         assert msg["code"] == "success", "Inference failed" 
 
         assert type(msg) == dict, "Wrong type of msg variable"
@@ -73,12 +71,11 @@ def test_dnn_success():
 
         assert len(msg["nods"]) < 5, "Too many nodules found"
         break
-    c.close()
 
 
 def test_dnn_broken_msg():
     value_schema = avro.load('avro_sch/res_prod.json')
-    value = {"command": "start", "path": "research8913enadkjnasdnksajdn", "id": "test_dnn_fail"}
+    value = {"command": "start", "path": "research8913enadkjnasdnksajdn", "id": "1"}
 
     avroProducer = AvroProducer({
            'bootstrap.servers': KAFKA_BROKER_URL,
@@ -86,6 +83,8 @@ def test_dnn_broken_msg():
           }, default_value_schema=value_schema)
 
     avroProducer.produce(topic='dnn.data', value=value)
+    print("msg produced")
+
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
     'group.id': 'groupid',
@@ -109,11 +108,6 @@ def test_dnn_broken_msg():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
         msg = msg.value()
- 
-        if msg["id"] != "test_dnn_fail":
-            print("Skipping msg with id ", msg["id"])
-            continue
         
         assert msg["code"] == "failed", "Inference failed"
         break
-    c.close()
