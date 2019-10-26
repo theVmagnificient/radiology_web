@@ -71,6 +71,8 @@ def test_dnn_success():
 
         assert len(msg["nods"]) < 5, "Too many nodules found"
         break
+    avroProducer.flush()
+    c.close()
 
 
 def test_dnn_broken_msg():
@@ -113,4 +115,7 @@ def test_dnn_broken_msg():
             continue
         
         assert msg["code"] == "failed", "Inference failed"
-        break
+        break 
+    
+    avroProducer.flush()
+    c.close()
