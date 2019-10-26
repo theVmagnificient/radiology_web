@@ -85,7 +85,7 @@ def test_dnn_broken_msg():
           }, default_value_schema=value_schema)
 
     avroProducer.produce(topic='dnn.data', value=value)
-    print("msg produced")
+    print("msg produced broken")
 
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
@@ -105,13 +105,15 @@ def test_dnn_broken_msg():
 
         if msg is None:
             continue
-
+        print("Got msg")
         if msg.error():
             print("AvroConsumer error: {}".format(msg.error()))
             continue
         msg = msg.value()
+        print(msg["id"])
 
         if msg["id"] != "broken":
+            print("Got not broken continue")
             continue
         
         assert msg["code"] == "failed", "Inference failed"
