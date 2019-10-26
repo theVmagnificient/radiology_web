@@ -73,6 +73,7 @@ def test_dnn_success():
         break
     avroProducer.flush()
     c.close()
+    print("DONE")
 
 
 def test_dnn_broken_msg():
@@ -89,7 +90,7 @@ def test_dnn_broken_msg():
 
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
-    'group.id': 'groupid',
+    'group.id': 'groupid1',
     'schema.registry.url': 'http://schema_registry:8081'})
 
     c.subscribe(["dnn.results"])
