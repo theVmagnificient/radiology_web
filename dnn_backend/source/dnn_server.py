@@ -63,12 +63,12 @@ class dnnServer(threading.Thread):
                     print("Inference time: {}".format(time.time() - start_time))
                 except Exception as e:
                     print(str(e))
-                    value = {"code": "failed", "path": "none", "id": "-1", "nods": []}
+                    value = {"code": "failed", "path": "none", "id": msg["id"], "nods": []}
                 finally:
                     self.producer.produce_msg(value)
                     print("msg produced")
             else:
-                value = {"code": "failed", "path": "none", "id": "-1", "nods": [{'uid': '', 'sliceNum': 0, 'coordX1': 0, 'coordY1': 0, 'coordX2': 0, 'coordY2': 0}]}
+                value = {"code": "failed", "path": "none", "id": msg["id"], "nods": [{'uid': '', 'sliceNum': 0, 'coordX1': 0, 'coordY1': 0, 'coordX2': 0, 'coordY2': 0}]}
                 self.producer.produce_msg(value)
 
             self.consumer.c.commit(kafka_msg)
