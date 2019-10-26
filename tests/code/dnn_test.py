@@ -22,9 +22,9 @@ def teardown_module(module):
     pass
 
 def test_dnn_success():
-    copyfile('research.zip', '/mnt/archives/research.zip') 
+    copyfile('research.zip', '/mnt/archives/research_success.zip') 
     value_schema = avro.load('avro_sch/res_prod.json')
-    value = {"command": "start", "path": "research.zip", "id": "1"}
+    value = {"command": "start", "path": "research_success.zip", "id": "success"}
 
     avroProducer = AvroProducer({
            'bootstrap.servers': KAFKA_BROKER_URL,

@@ -205,10 +205,12 @@ node("ml2") {
         dir("${WORKSPACE}") {
           sh("docker-compose down")
           sh("chmod +x uninstall.sh")
-          sh("./uninstall.sh")
         }
         dir("${WORKSPACE}/tests") {
           sh("docker-compose down")
+        }
+        dir("${WORKSPACE}") {
+          sh("./uninstall.sh")
         }
         cleanWs()
      }
