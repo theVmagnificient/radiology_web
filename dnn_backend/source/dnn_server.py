@@ -68,7 +68,7 @@ class dnnServer(threading.Thread):
                     self.producer.produce_msg(value)
                     print("msg produced")
             else:
-                value = {"code": "failed", "path": "none", "id": "-1", "nods": []}
+                value = {"code": "failed", "path": "none", "id": "-1", "nods": [{'uid': '', 'sliceNum': 0, 'coordX1': 0, 'coordY1': 0, 'coordX2': 0, 'coordY2': 0}]}
                 self.producer.produce_msg(value)
 
             self.consumer.c.commit(kafka_msg)
