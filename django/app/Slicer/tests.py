@@ -17,7 +17,8 @@ KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 
 class UploadResearchTest(TestCase):
     research_instance_uid = "1.3.12.2.1107.5.1.4.74203.30000018121306150842600002074"
-    test_prediction_nods = {"command": "start", "path": "research123.zip", "id": "1"} # TODO: change!
+#    test_prediction_nods = {"command": "start", "path": "research123.zip", "id": "1"} # TODO: change!
+    test_prediction_nods = {"code": "success", "path": "none", "id": "django_test", "nods": []}
 
     def setUp(self):
         zip_path = os.path.join(settings.BASE_DIR, "static", "research_storage", "zips", "research.zip")
@@ -41,7 +42,7 @@ class UploadResearchTest(TestCase):
 
     def test_database_updated(self):
         res = Research.objects.filter(series_instance_uid=self.research_instance_uid)
-        self.assertEqual(res.count() != 0, True, "Research doesn't sidned up in database")
+        self.assertEqual(res.count() != 0, True, "Research doesn't signed up in database")
         return res[0]
     
     def test_django_consumer(self):
