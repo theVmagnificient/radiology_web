@@ -32,6 +32,7 @@ class UploadResearchTest(TestCase):
             self.dir_path = resp["extract_dir"]
 
             research_db = process(resp)
+            print(research_db.id, research_db.series_instance_uid)
             call_prediction(research_db)
         except Exception as ex:
             self.assert_(True, str(ex))
