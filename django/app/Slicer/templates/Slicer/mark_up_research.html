@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<!-- saved from url=(0076)https://tools.cornerstonejs.org/examples/tools/stack-scroll-mouse-wheel.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script>
+    window.ENVIRONMENT = 'production';
+  </script>
+
+  <title> Разметить исследование </title>
+
+   {% load staticfiles %}
+
+  <!-- support for mobile touch devices -->
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="stylesheet" href="{% static 'Account/style/main.css' %}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <link rel="stylesheet" href="{% static 'Slicer/cornerstone/monokai.css' %}">
+  <link rel="stylesheet" href="{% static 'Slicer/cornerstone/bulma.min.css' %}">
+  <link rel="stylesheet" href="{% static 'Slicer/cornerstone/styles.css' %}">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css" />
+
+  <!-- include the hammer.js library for touch gestures-->
+  <script src="{% static 'Slicer/cornerstone/hammer.js' %}"></script>
+  <script src="{% static 'Slicer/cornerstone/dicomParser.min.js' %}"></script>
+  <script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <!-- include the cornerstone library -->
+  <script src="{% static 'Slicer/cornerstone/cornerstone-core' %}"></script>
+  <script src="{% static 'Slicer/cornerstone/cornerstone-math' %}"></script>
+  <script src="{% static 'Slicer/cornerstone/cornerstone-wado-image-loader' %}"></script>
+  <script src="{% static 'Slicer/cornerstone/cornerstone-tools@^3' %}"></script>
+
+  <style>
+    .cornerstone-element {
+      border-color: black;
+      height: 70vh;
+    }
+  </style>
+
+	</head>
+<body>
+
+{% block topbar %} {% include 'Account/topbar.html' %} {% endblock %}
+{% block sidebar %} {% include 'Account/sidebar.html' %} {% endblock %}
+
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <section class="section">
+  <div class="container">
+
+    <div class="buttons">
+      <button class="button set-tool-mode" data-action="Active" data-tool="WwwcRegion">
+        WwcRegion
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="Wwwc">
+        Wwwc
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="Zoom">
+        Zoom
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="Rotate">
+        Rotate
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="Pan">
+        Pan
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="Magnify">
+        Magnify
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="EllipticalRoi">
+        Elliptical tool
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="RectangleRoi">
+        Rectangle tool
+      </button>
+      <!-- <button class="button set-tool-mode" data-action="Passive" data-tool="WwwcRegion">
+        Passive
+      </button>
+      <button class="button set-tool-mode" data-action="Enabled" data-tool="WwwcRegion" >Enable</button>
+      <button class="button set-tool-mode" data-action="Disabled" data-tool="WwwcRegion">
+        Disable
+      </button> -->
+    </div>
+
+    <div class="cornerstone-element-wrapper">
+      <div id="cornerstone-element" class="cornerstone-element" data-index="0" oncontextmenu="return false" tabindex="0" style="touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><canvas class="cornerstone-canvas" width="1148" height="316" style="display: block; width: 1148px; height: 316px;"></canvas></div>
+    </div>
+    <div id = "slider"></div>
+  </div>
+</section>
+
+{% if research.predictions_dir|length %}
+	<center><p><a href = "/static/research_storage/results/zips/{{research.predictions_dir}}.zip"> Скачать архив </a></p></center>
+{% else %}
+	<center><p><b> Исследование обрабатывается </b></p></center>
+{% endif %}
+
+
+<div class = "row">
+  <div class = "col m2"></div>
+  <div class = "col m8">
+    <ul class="collapsible">
+            <li>
+            <div class="collapsible-header"><i class="material-icons">info</i> </b> Информация о снимке </div>
+                <div class="collapsible-body">
+                    <span>Transfer Syntax: </span><span id="transferSyntax"></span><br>
+                    <span>SOP Class: </span><span id="sopClass"></span><br>
+                    <span>Samples Per Pixel: </span><span id="samplesPerPixel"></span><br>
+                    <span>Photometric Interpretation: </span><span id="photometricInterpretation"></span><br>
+                    <span>Number Of Frames: </span><span id="numberOfFrames"></span><br>
+                    <span>Planar Configuration: </span><span id="planarConfiguration"></span><br>
+                    <span>Rows: </span><span id="rows"></span><br>
+                    <span>Columns: </span><span id="columns"></span><br>
+                    <span>Pixel Spacing: </span><span id="pixelSpacing"></span><br>
+                    <span>Row Pixel Spacing: </span><span id="rowPixelSpacing"></span><br>
+                    <span>Column Pixel Spacing: </span><span id="columnPixelSpacing"></span><br>
+                    <span>Bits Allocated: </span><span id="bitsAllocated"></span><br>
+                    <span>Bits Stored: </span><span id="bitsStored"></span><br>
+                    <span>High Bit: </span><span id="highBit"></span><br>
+                    <span>Pixel Representation: </span><span id="pixelRepresentation"></span><br>
+                    <span>WindowCenter: </span><span id="windowCenter"></span><br>
+                    <span>WindowWidth: </span><span id="windowWidth"></span><br>
+                    <span>RescaleIntercept: </span><span id="rescaleIntercept"></span><br>
+                    <span>RescaleSlope: </span><span id="rescaleSlope"></span><br>
+                    <span>Basic Offset Table Entries: </span><span id="basicOffsetTable"></span><br>
+                    <span>Fragments: </span><span id="fragments"></span><br>
+                    <span>Max Stored Pixel Value: </span><span id="minStoredPixelValue"></span><br>
+                    <span>Min Stored Pixel Value: </span><span id="maxStoredPixelValue"></span><br>
+                    <span>Total Time: </span><span id="totalTime"></span><br>
+                    <span>Load Time: </span><span id="loadTime"></span><br>
+                    <span>Decode Time: </span><span id="decodeTime"></span><br>
+            </div>
+            </li>
+    </ul>
+    </div>
+  <div class = "col m2"></div>
+</div>
+
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(elems);
+    });   
+
+    let dicomNames = [
+        {% for dicom_name in research.dicom_names_list %}
+            "{{ dicom_name }}",
+        {% endfor %}
+    ];
+
+
+    /*let Nods = [
+	{% for node in nods %}
+		{ 
+			"uid": "{{ node.uid }}", 
+			"sliceNum":  {{ node.sliceNum }},
+			"coordX1":  {{ node.coordX1 }},
+			"coordY1":  {{ node.coordY1 }},
+			"coordX2":  {{ node.coordX2 }},
+			"coordY2":  {{ node.coordY2 }},
+		},
+	{% endfor %}
+    ];*/
+</script>
+
+<script>
+  const baseUrl =
+    window.ENVIRONMENT === 'development'
+      ? 'http://localhost/'
+      : 'http://www.med.mos-ai.ru/';
+
+  _initCornerstone();
+  _initInterface();
+
+  const element = document.querySelector('.cornerstone-element');
+
+  // Init CornerstoneTools
+  cornerstoneTools.init();
+  cornerstone.enable(element);
+
+
+  const toolNames = ['StackScrollMouseWheel', 'WwwcRegion', "Wwwc", "Zoom", "Rotate", "Pan", "Magnify", "EllipticalRoi", "RectangleRoi"];
+  const imageIds = [];
+
+  for (let i = 0; i < dicomNames.length; i++) {
+    imageIds.push(
+      'wadouri:' + baseUrl + 'static/research_storage/dicoms/{{ research.dir_name }}/' + dicomNames[i]
+    );
+  }
+
+  const stack = {
+    currentImageIdIndex: 0,
+    imageIds: imageIds,
+  };
+
+  // setup handlers before we display the image
+    function onImageRendered(e) {
+        let sliceID = stack.currentImageIdIndex;
+	
+	slider.noUiSlider.updateOptions({
+		start: sliceID + 1,
+	});
+
+	/*let node = null;
+	for (let i = 0; i < Nods.length; i++) {
+		if (Math.abs(Nods[i]["sliceNum"] - sliceID) < 6) {
+			node = Nods[i];
+		}
+	}
+	if (node == null) return;*/
+
+        const eventData = e.detail;
+        // set the canvas context to the image coordinate system
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, eventData.canvasContext);
+        // NOTE: The coordinate system of the canvas is in image pixel space.  Drawing
+        // to location 0,0 will be the top left of the image and rows,columns is the bottom
+        // right.
+        const context = eventData.canvasContext;
+        context.beginPath();
+        context.strokeStyle = 'red';
+        context.lineWidth = .8;
+        if (node.coordX2 > node.coordX1) {
+                [node.coordX1, node.coordX2] = [node.coordX2, node.coordX1];
+        }
+        if (node.coordY2 > node.coordY1) {
+                [node.coordY1, node.coordY2] = [node.coordY2, node.coordY1];
+        }
+        context.rect(node.coordX1, node.coordY1, node.coordX2 - node.coordX1, node.coordY2 - node.coordY1);
+
+        context.stroke();
+        context.beginPath();
+        // context.arc(128, 128, 20, 0, 2 * Math.PI, false);
+        // context.fillStyle = 'green';
+        // context.lineWidth = -1;
+        // context.strokeStyle = 'white';
+        // context.stroke();
+        // document.getElementById('topright').textContent = "Render Time:" + eventData.renderTimeInMs + " ms";
+        // document.getElementById('bottomleft').textContent = "WW/WL:" + Math.round(eventData.viewport.voi.windowWidth) + "/" + Math.round(eventData.viewport.voi.windowCenter);
+        // document.getElementById('bottomright').textContent = "Zoom:" + eventData.viewport.scale.toFixed(2);
+    }
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
+    cornerstone.events.addEventListener('cornerstoneimageloaded', function(e) {
+        const eventData = e.detail;
+        // document.getElementById('imageLoaded').textContent = `Last ImageId Loaded: ${eventData.image.imageId}`;
+    });
+
+
+  element.tabIndex = 0;
+  element.focus();
+
+  cornerstone.loadImage(imageIds[0]).then(function(image) {
+    cornerstone.displayImage(element, image);
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
+  });
+
+  // Add the tools
+  for (let i = 0; i < toolNames.length; i++) {
+      const apiTool = cornerstoneTools[`${toolNames[i]}Tool`];
+      cornerstoneTools.addTool(apiTool);
+  }
+
+  cornerstoneTools.setToolActive(toolNames[0], { mouseButtonMask: 1 });
+  
+  function _setSlice(new_slice) {
+    stack.currentImageIdIndex = new_slice;
+    cornerstone.loadImage(imageIds[new_slice]).then(function(image) {
+      cornerstone.displayImage(element, image);
+    });
+  }
+
+  
+  let slices_slider = document.getElementById('slider');
+
+  let range_slider = {
+  	'min': [     1 ],
+        //'10%': [   500,  500 ],
+        //'50%': [  4000, 1000 ],
+        'max': [ imageIds.length ],
+  };
+
+//  let slider_nods = [];
+//  for (let i = 0; i < Nods.length; i++) {
+//	slider_nods.push(Nods[i]["sliceNum"] + 1);
+//  }
+
+  noUiSlider.create(slices_slider, {
+      range: range_slider,
+      start: 1,
+      step: 1,
+  });
+
+  slider.noUiSlider.on('change', (values, handle, unencoded, tap, positions) => {
+	 _setSlice(parseInt(values[0]) - 1);
+  });
+
+  /***************************************************************************
+   * UI & Boilerplate setup code
+   **************************************************************************/
+  
+  /***
+   *
+   *
+   */
+  function _initCornerstone() {
+    // Externals
+    cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+    cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+    cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+    cornerstoneTools.external.cornerstone = cornerstone;
+    cornerstoneTools.external.Hammer = Hammer;
+
+    // Image Loader
+    const config = {
+      webWorkerPath: `${baseUrl}assets/image-loader/cornerstoneWADOImageLoaderWebWorker.js`,
+      taskConfiguration: {
+        decodeTask: {
+          codecsPath: `${baseUrl}assets/image-loader/cornerstoneWADOImageLoaderCodecs.js`,
+        },
+      },
+    };
+    cornerstoneWADOImageLoader.webWorkerManager.initialize(config);
+  }
+
+  /***
+   *
+   *
+   */
+  function _initInterface() {
+    const handleClick = function(evt) {
+      const action = this.dataset.action;
+      const options = {
+        mouseButtonMask:
+          evt.buttons || convertMouseEventWhichToButtons(evt.which),
+      };
+      const toolName = this.dataset.tool;
+      console.log("Action:", action);
+      console.log("ToolName: ", toolName);
+      cornerstoneTools[`setTool${action}`](toolName, options);
+
+      for (let i = 0; i < toolNames.length; i++) {
+        if (toolNames[i] !== "StackScrollMouseWheel" && toolNames[i] !== toolName) {
+            cornerstoneTools[`setToolDisabled`](toolNames[i], options);
+        }
+      }
+
+      // Remove active style from all buttons
+      const buttons = document.querySelectorAll('.set-tool-mode');
+      buttons.forEach(btn => {
+        btn.classList.remove('is-primary');
+      });
+
+      // Add active style to this button
+      this.classList.add('is-primary');
+
+      evt.preventDefault();
+      evt.stopPropagation();
+      evt.stopImmediatePropagation();
+      return false;
+    };
+
+    const buttons = document.querySelectorAll('.set-tool-mode');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('contextmenu', handleClick);
+      btn.addEventListener('auxclick', handleClick);
+      btn.addEventListener('click', handleClick);
+    });
+  }
+
+  const convertMouseEventWhichToButtons = which => {
+    switch (which) {
+      // no button
+      case 0:
+        return 0;
+      // left
+      case 1:
+        return 1;
+      // middle
+      case 2:
+        return 4;
+      // right
+      case 3:
+        return 2;
+    }
+    return 0;
+  };
+</script>
+
+      </div>
+    </main>
+
+</body></html>

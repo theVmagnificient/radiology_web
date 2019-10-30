@@ -96,7 +96,8 @@
                                             <p class="truncate"><b>Patient ID: </b> {{ d.series.patient_id }} </p>
                                             <p class="truncate"><b>Слайсов: </b> {{ d.series.dicom_names_list | length }} </p>
                                             <br /><br />
-                                            <a href="/series/view/{{d.series.id}}">Полный просмотр</a>
+                                            <a href="/series/view/{{d.series.id}}">Полный просмотр</a> <br />
+                                            <a href="/series/mark_up/{{d.series.id}}">Разметить</a>
                             <a href="/static/research_storage/zips/{{d.series.zip_name}}" style="margin-left:2%;">Скачать архив</a>
                                         </div>
                                         <div class="col s12 m6">

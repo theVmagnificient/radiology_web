@@ -47,6 +47,24 @@ def view_research(request, id):
             }
         )
 
+def mark_up_research(request, id):
+    if "id" not in request.session:
+        return HttpResponseRedirect("/")
+    user_id = request.session["id"]
+    user = User.objects.get(id=user_id)
+    ext_user = ExtendedUser.objects.get(userID=user_id)
+
+    res = Research.objects.filter(id=id)
+    if res.count() != 1:
+        return HttpResponse("404")
+  
+    return render(request, "Slicer/mark_up_research.html", {
+                "research": res,
+                "extUser": ext_user,
+                "user": user,
+            }
+        )
+
 @csrf_exempt
 def kafka_processed(request):
     if request.method == "POST" and "data" in request.POST:
