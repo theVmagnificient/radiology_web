@@ -36,7 +36,8 @@ def test_dnn_broken_msg():
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
     'group.id': 'group_test2',
-    'schema.registry.url': 'http://schema_registry:8081'})
+    'schema.registry.url': 'http://schema_registry:8081',
+    'auto.offset.reset': 'earliest'})
 
     c.subscribe(["dnn.results"])
     while True:
@@ -84,7 +85,8 @@ def test_dnn_success():
     c = AvroConsumer({
     'bootstrap.servers': "broker:9092",
     'group.id': 'group_test1',
-    'schema.registry.url': 'http://schema_registry:8081'})
+    'schema.registry.url': 'http://schema_registry:8081',
+    'auto.offset.reset': 'earliest'})
 
     c.subscribe(["dnn.results"])
 
