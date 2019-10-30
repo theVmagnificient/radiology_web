@@ -22,7 +22,7 @@
 <body>
     {% block topbar %} {% include 'Account/topbar.html' %} {% endblock %}
     {% block sidebar %} {% include 'Account/sidebar.html' %} {% endblock %}
-
+    <br />
     <div class="hide-on-med-and-up">
         <div class="row">
             <div class="col s12 m4">
@@ -47,20 +47,23 @@
     </div>
     <div class="hide-on-small-only">
         <div class="row">
-            <div class="col s6">
+            <div class = "col s1" style="height:80vh;" id = "left_col"></div>
+            <div class="col s5">
                 <center>
                     <div style="width: 60%" class = "hoverable show1 showBase">
-                        <div class = "card">
-                        <div class = "card-image">
-                        <img src= "/{{ extUser.ava.name }}">
-                        <a class="btn-floating halfway-fab waves-effect waves-light red" style="margin-bottom: 5%;"><i
-                            class="material-icons" onclick="uploadAva()">edit</i></a>
+                            <div class = "card">
+                                <div class = "card-image" id = "card-image">
+                                    <img src= "/{{ extUser.ava.name }}">
+                                {% comment %} <a class="btn-floating halfway-fab waves-effect waves-light red" style="margin-bottom: 5%;"><i
+                                    class="material-icons" onclick="uploadAva()">edit</i></a>
+                                    </div>
+                                <br /> {% endcomment %}
+                                </div> 
                             </div>
-                        <br />
                     </div>
                 </center>
             </div>
-            <div class="col s6">
+            <div class="col s5">
                 <div class = "row">
                     <div class = "col s9">
                         <div class="card show2 showBase">
@@ -73,7 +76,7 @@
                             </div>
                             <div class="card-action">
                                 <a href="#" onclick="changeAccountInfo()">Изменить данные</a>
-                                <a href="#" onclick="sendFeedbackForm()">Написать в поддержку</a>
+                                <a href="#" onclick="sendFeedbackForm()">Поддержка</a>
                             </div>
                         </div>
                         <div class="card show3 showBase">
@@ -87,6 +90,7 @@
                         </div>
                     </div>
             </div>
+            <div class = "col s1"> </div>
         </div>
     </div>
     {% csrf_token %}
@@ -96,6 +100,21 @@
         const ACCOUNT_SURNAME = "{{user.surname}}";
         const ACCOUNT_MAIL = "{{user.mail}}";
     </script>
+
+    <script>
+        $("#left_col").hover(
+            function() {
+                sidenav_instance.sidenav("open");
+            }, function() {
+                // when mouse leave the div
+            }
+        );
+
+        $("#card-image").click(function() {
+             uploadAva();
+        });
+    </script>
+
     <script src="{% static 'Account/js/change_account_info.js' %}"> </script>
     <script src="{% static 'Account/js/chatSockets.js' %}"> </script>
     <script src="{% static 'Account/js/send_feedback.js' %}"> </script>
