@@ -57,4 +57,4 @@ class UploadResearchTest(TestCase):
         print("Waiting for consumer`s answer")
 
         res = self.test_database_updated()
-        self.assertEqual(res.prediction_nods, self.test_prediction_nods)
+        self.assertEqual(res.predictions_nods, self.test_prediction_nods)
