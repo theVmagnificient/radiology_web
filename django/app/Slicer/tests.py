@@ -2,7 +2,6 @@ from django.test import TestCase
 
 from .models import Research
 from .slicer import extract_zip, process, call_prediction
-import slicer
 from confluent_kafka import avro
 from confluent_kafka import KafkaError
 from confluent_kafka.avro import AvroConsumer
