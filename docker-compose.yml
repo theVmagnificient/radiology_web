@@ -19,7 +19,7 @@ services:
       PRODUCER_TOPIC: dnn.data 
       KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
     command: >
-      sh -c "uwsgi --ini radiology_uwsgi.ini"
+      sh -c "./manage.py migrate && uwsgi --ini radiology_uwsgi.ini"
     depends_on:
       - "db" 
   db:

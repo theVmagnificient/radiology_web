@@ -11,7 +11,7 @@ services:
       - aimed_archives:/mnt/archives
       - aimed_results:/mnt/results
         # command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
-    command: ["/bin/bash", "-c", "sleep 100 && cd /app/code && py.test -l -v dnn_test.py --junit-xml=report.xml"]
+    command: ["/bin/bash", "-c", "sleep 100 && cd /app/code && py.test -l -v dnn_test.py --junit-xml=dnn_tests.xml"]
     #consumer:
     #build: ./producer
     #environment:
