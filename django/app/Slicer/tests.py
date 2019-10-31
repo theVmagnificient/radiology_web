@@ -18,11 +18,10 @@ KAFKA_BROKER_URL = os.environ.get('KAFKA_BROKER_URL')
 
 class UploadResearchTest(TestCase):
     research_instance_uid = "1.3.12.2.1107.5.1.4.74203.30000018121306150842600002074"
-    test_prediction_nods = {"command": "start", "path": "research123.zip", "id": "1"} # TODO: change!
 
     def setUp(self):
         zip_path = os.path.join(settings.BASE_DIR, "static", "research_storage", "zips", "research.zip")
-        copyfile(os.path.join(settings.BASE_DIR, "tests/research123.zip"), zip_path) 
+        copyfile(zip_path, os.path.join(settings.BASE_DIR, "tests/research123.zip")) 
         print("Zipfile copied!")
 
         try:
@@ -44,17 +43,3 @@ class UploadResearchTest(TestCase):
         res = Research.objects.filter(series_instance_uid=self.research_instance_uid)
         self.assertEqual(res.count() != 0, True, "Research doesn't sidned up in database")
         return res[0]
-    
-    def test_django_consumer(self):
-        value_schema = avro.load('/app/Slicer/avro_sch/dnn_res_prod.json')
-        avroProducer = AvroProducer({
-            'bootstrap.servers': KAFKA_BROKER_URL,
-            'schema.registry.url': 'http://schema_registry:8081'
-        }, default_value_schema=value_schema)
-
-        avroProducer.produce(topic='dnn.results', value=self.test_prediction_nods)
-        print("msg produced")
-        print("Waiting for consumer`s answer")
-
-        res = self.test_database_updated()
-        self.assertEqual(res.prediction_nods, self.test_prediction_nods)
