@@ -73,7 +73,7 @@ func initNewBot(tokenFile string, authURL string) (*botTG, error) {
 	})
 
 	bot.Bot.Handle(tb.OnText, func(m *tb.Message) {
-                if m.text == "ping" {
+                if m.Text == "ping" {
                         bot.Bot.Send(m.Sender, "pong")
                         return
                 }

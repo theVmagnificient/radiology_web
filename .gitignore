@@ -15,3 +15,4 @@ dnn_backend/source/experiments
 *.sql
 *.ini
 *.session*
+*.iml
