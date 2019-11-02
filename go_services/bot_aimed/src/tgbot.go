@@ -73,6 +73,10 @@ func initNewBot(tokenFile string, authURL string) (*botTG, error) {
 	})
 
 	bot.Bot.Handle(tb.OnText, func(m *tb.Message) {
+                if m.text == "ping" {
+                        bot.Bot.Send(m.Sender, "pong")
+                        return
+                }
 		str, err := bot.getPicsPath(m.Text)
 
 		if err != nil || str == nil {

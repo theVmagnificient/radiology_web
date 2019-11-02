@@ -190,6 +190,11 @@ func TestExampleMsg(t *testing.T) {
 			Body:	CR{"token": "1234 jasdnasjkdn ajskdn a"},
 			Result: CR{"message": "Bad token format | Must be 32 symbol length"},
 		},
+		Case{
+			Token: 	"ping",
+			Body:	CR{"token": "ping"},
+			Result: CR{"message": "pong"},
+		},
 	}
 	b, err := initNewBot("token.secret", server.URL)
 
