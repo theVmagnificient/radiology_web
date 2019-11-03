@@ -1,0 +1,36 @@
+version: '3'
+
+
+services:
+  auth:
+    hostname: auth
+    build:
+      context: auth_aimed/.
+      dockerfile: Dockerfile
+    depends_on:
+      - db_auth
+    volumes:
+      - aimed_results:/mnt/results
+
+  db_auth:
+    build:
+      context: auth_aimed/database/.
+
+  bot:
+    build:
+      context: bot_aimed/.
+      dockerfile: Dockerfile
+    environment:
+      AUTH_URL: http://auth:8082/research
+    volumes:
+      - aimed_results:/mnt/results
+
+
+networks:
+  default:
+     external:
+       name: kafka-network
+
+volumes:
+  aimed_results:
+    external: true

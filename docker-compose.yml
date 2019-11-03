@@ -19,7 +19,7 @@ services:
       PRODUCER_TOPIC: dnn.data 
       KAFKA_SCHEMA_REGISTRY_URL: 'http://schema_registry:8081'
     command: >
-      sh -c "uwsgi --ini radiology_uwsgi.ini"
+      sh -c "./manage.py migrate && uwsgi --ini radiology_uwsgi.ini"
     depends_on:
       - "db" 
   db:
@@ -67,7 +67,7 @@ services:
       - ./dnn_backend/source:/app/source
     ports:
       - "12222:22"
-    command: ["/bin/bash", "-c", "source activate aimed && cd /app/source/ && python3 dnn_server.py"]
+    command: ["/bin/bash", "-c", "sleep 30 && source activate aimed && cd /app/source/ && python3 dnn_server.py"]
         #command: ["/bin/bash", "-c", " while :; do echo 'Hit CTRL+C'; sleep 1; done"]
 
 networks:

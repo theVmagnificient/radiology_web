@@ -11,3 +11,8 @@ dnn_backend/radio
 dnn_backend/source/experiments
 *.swp
 *.zip
+*.secret*
+*.sql
+*.ini
+*.session*
+*.iml

@@ -56,8 +56,8 @@ def prepareTestStages() {
   buildStages.put("Django test", {
          stage("Test django") {
 	         dir("${WORKSPACE}") {
-             sh("ls tests/code/")
-            sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
+            sh("ls tests/code/")
+            sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/static/research_storage/zips/research.zip")
             sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
             sleep 30
             sh("docker cp \$(docker-compose ps -q django):/app/tests/tests.xml . && mv tests.xml django_tests.xml")
@@ -71,6 +71,22 @@ def prepareTestStages() {
               sh("docker-compose up --force-recreate")
               sh("docker-compose logs --no-color > tests.log")
               sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
+            }
+          }
+      })
+  buildStages.put("Telegram bot & Auth service tests", {
+          stage("Test tg bot") {
+            dir("${WORKSPACE}/go_services") {
+              println "Putting images for tests into the aimed_results volume" 
+              sh("docker container create --name temp -v aimed_results:/data busybox")
+              sh("docker cp bot_aimed/res1 temp:/data")
+              sh("docker-compose -f docker-compose.test.yml build")
+              sh("docker-compose -f docker-compose.test.yml up -d db_auth")
+              sh("docker-compose -f docker-compose.test.yml up auth bot flask")
+              sh("docker-compose logs --no-color > tg_bot.log")
+              sh("docker cp \$(docker-compose -f docker-compose.test.yml ps -q bot):/src/bot_tests.xml .")
+              sh("docker cp \$(docker-compose -f docker-compose.test.yml ps -q auth):/src/auth_tests.xml .")
+              sh("docker-compose -f docker-compose.test.yml down")
             }
           }
       })
@@ -108,7 +124,14 @@ node("ml2") {
 	
         sh("scp -r " + ip + "weights dnn_backend/") 
         sh("scp " + ip + "research.zip tests/code/")
-    	
+
+        sh("scp " + ip + "auth_service/db.secret go_services/auth_aimed/src")
+        sh("scp " + ip + "auth_service/init.sql go_services/auth_aimed/database")
+
+        sh("scp " + ip + "bot_tg/token.secret go_services/bot_aimed/src")
+        sh("scp " + ip + "bot_tg/test/* go_services/flask_test_pyrogram/")
+        sh("scp -r " + ip + "res1 go_services/bot_aimed/")
+
         def str = sh(script: 'find dnn_backend/ -name "*pth.tar" | xargs du -hs | awk \'{print $1}\' | sed \'s/M//\' | awk \'$1 < 1 {print "FAILED"}; END {}\'', returnStdout: true)
 	      println str
         if (str != "") {
@@ -162,46 +185,34 @@ node("ml2") {
           }
         }
       }
-//      parallel {
-/*	      stage("Test django module") { 
-	       dir("${WORKSPACE}") {
-		 sh("ls tests/code/")
-		 sh("docker cp tests/code/research.zip \$(docker-compose ps -q django):/app/tests/")
-		 sh("docker-compose exec -d django /bin/bash -c \"python manage.py test\"")
-                 sleep 30
-		 sh("docker cp \$(docker-compose ps -q django):/app/tests/tests.xml . && mv tests.xml django_tests.xml")
-	       }
-	      }
-	      stage("Test dnn backend") {
-		dir("${WORKSPACE}/tests") {
-		  sh("docker-compose build")
-		  sh("docker-compose up --force-recreate")
-		  sh("docker-compose logs --no-color > tests.log")
-		  sh("docker cp \$(docker-compose ps -q tests):/app/code/dnn_tests.xml .")
-		}
-	      } */
- //     }
-      stage("Archive artifacts") {
-        archiveArtifacts("**/*.log*")
-        archiveArtifacts("**/*tests*")
-        junit("**/*tests.xml")
+      stage("Collect tests") {
+         junit("**/*tests.xml")
       }
     }
     catch(String error) {
       println(error)
       currentBuild.result = "FAILURE"
-    } finally { 
+    } finally {
+       stage("Archive artifacts") {
+         archiveArtifacts("**/*.log*")
+         archiveArtifacts("**/*tests*")
+       }
        stage("Clear") {
-       dir("${WORKSPACE}/kafka") { 
-         sh("docker-compose down")
-       }
-       dir("${WORKSPACE}") {
-         sh("docker-compose down")
-       }
-       dir("${WORKSPACE}/tests") {
-         sh("docker-compose down")
-       }
-       cleanWs()
+        sh("docker rm temp")
+        dir("${WORKSPACE}/kafka") { 
+          sh("docker-compose down")
+        }
+        dir("${WORKSPACE}") {
+          sh("docker-compose down")
+          sh("chmod +x uninstall.sh")
+        }
+        dir("${WORKSPACE}/tests") {
+          sh("docker-compose down")
+        }
+        dir("${WORKSPACE}") {
+          sh("./uninstall.sh")
+        }
+        cleanWs()
      }
    }
 }
