@@ -10,26 +10,6 @@
 .page-footer {
     background-color: black !important;
 }
-
-@media screen and (max-width : 1920px) {
-    .div-only-mobile {
-        visibility:hidden;
-    }
-}
-
-@media screen and (max-width : 906px) {
-    .desk {
-        visibility:hidden;
-    }
-    .div-only-mobile{
-        visibility:visible;
-    }
-}
-
 #progressUploadingResearch {
     padding-left: 10%;
-}
-
-#progressUploadingResearch .statusText {
-
 }

@@ -1,12 +1,12 @@
 {% block sidebar %}
-<a href="#" data-target="slide-out" class="sidenav-trigger">
+{% comment %} <a href="#" data-target="slide-out" class="sidenav-trigger">
     <i class="medium material-icons">menu</i>
-</a>
+</a> {% endcomment %}
 <ul id="slide-out" class="sidenav">
     <li>
         <div class="user-view">
             <div class="background">
-                <img src="https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/Hnd01gaCiu89hpk4/videoblocks-transmitting-signals-to-the-neurons-active-neural-network-the-activity-of-blue-structures-that-transmit-signals-in-different-corners-of-the-screen-black-background-place-for-text-plexus_szwar989m_thumbnail-full01.png">
+                <img src="https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/Hnd01gaCiu89hpk4/videoblocks-transmitting-signals-to-the-neurons-active-neural-network-the-activity-of-blue-structures-that-transmit-signals-in-different-corners-of-the-screen-black-background-place-for-text-plexus_szwar989m_thumbnail-full01.png" style = "width:100%;">
             </div>
                 <a href="#user"><img class="circle" src="/{{ extUser.ava.name }}"></a>
             <a href="#name"><span class="white-text name"> {{ user.surname }} {{ user.name }} </span></a>
@@ -23,19 +23,15 @@
 </ul>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var elems = document.querySelectorAll('.sidenav');
-            var instances = M.Sidenav.init(elems);
-        });
+    let SIDENAV_STATE = false;
+    $(document).ready(function(){
+        $('.sidenav').sidenav();
+    });
 
-        // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
-        // var collapsibleElem = document.querySelector('.collapsible');
-        // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
+    let sidenav_instance = $(".sidenav");
 
-        // Or with jQuery
-
-        $(document).ready(function(){
-            $('.sidenav').sidenav();
-        });
+    $("#med-logo").click(function () {
+        sidenav_instance.sidenav("open");        
+    });
 </script>
 {% endblock %}

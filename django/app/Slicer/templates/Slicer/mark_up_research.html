@@ -5,7 +5,7 @@
     window.ENVIRONMENT = 'production';
   </script>
 
-  <title> Просмотр исследования </title>
+  <title> Разметить исследование </title>
 
    {% load staticfiles %}
 
@@ -69,6 +69,12 @@
       </button>
       <button class="button set-tool-mode" data-action="Active" data-tool="Magnify">
         Magnify
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="EllipticalRoi">
+        Elliptical tool
+      </button>
+      <button class="button set-tool-mode" data-action="Active" data-tool="RectangleRoi">
+        Rectangle tool
       </button>
       <!-- <button class="button set-tool-mode" data-action="Passive" data-tool="WwwcRegion">
         Passive
@@ -147,7 +153,7 @@
     ];
 
 
-    let Nods = [
+    /*let Nods = [
 	{% for node in nods %}
 		{ 
 			"uid": "{{ node.uid }}", 
@@ -158,7 +164,7 @@
 			"coordY2":  {{ node.coordY2 }},
 		},
 	{% endfor %}
-    ];
+    ];*/
 </script>
 
 <script>
@@ -177,7 +183,7 @@
   cornerstone.enable(element);
 
 
-  const toolNames = ['StackScrollMouseWheel', 'WwwcRegion', "Wwwc", "Zoom", "Rotate", "Pan", "Magnify"];
+  const toolNames = ['StackScrollMouseWheel', 'WwwcRegion', "Wwwc", "Zoom", "Rotate", "Pan", "Magnify", "EllipticalRoi", "RectangleRoi"];
   const imageIds = [];
 
   for (let i = 0; i < dicomNames.length; i++) {
@@ -199,13 +205,13 @@
 		start: sliceID + 1,
 	});
 
-	let node = null;
+	/*let node = null;
 	for (let i = 0; i < Nods.length; i++) {
 		if (Math.abs(Nods[i]["sliceNum"] - sliceID) < 6) {
 			node = Nods[i];
 		}
 	}
-	if (node == null) return;
+	if (node == null) return;*/
 
         const eventData = e.detail;
         // set the canvas context to the image coordinate system
@@ -277,21 +283,15 @@
         'max': [ imageIds.length ],
   };
 
-  let slider_nods = [];
-  for (let i = 0; i < Nods.length; i++) {
-	slider_nods.push(Nods[i]["sliceNum"] + 1);
-  }
+//  let slider_nods = [];
+//  for (let i = 0; i < Nods.length; i++) {
+//	slider_nods.push(Nods[i]["sliceNum"] + 1);
+//  }
 
   noUiSlider.create(slices_slider, {
       range: range_slider,
       start: 1,
       step: 1,
-      pips: {
-          mode: 'values',
-          values: slider_nods,
-          density: 4,
-          stepped: true
-      }
   });
 
   slider.noUiSlider.on('change', (values, handle, unencoded, tap, positions) => {
